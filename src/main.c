@@ -10,8 +10,6 @@
 #include <SDL_ttf.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <errno.h>
 #include <time.h>
 #include <SDL_mouse.h>
 
@@ -84,117 +82,8 @@ int detecterCollision(SDL_Rect rectJoueur, SDL_Rect rectBranche) {
             rectJoueur.y + rectJoueur.h > rectBranche.y);
 }
 
-void readConfigFile(char* theme, double* difficulty, double* speed) {
-
-    // Constantes pour les valeurs par défaut et les limites
-    const char defaultTheme[] = "default";
-    const double defaultDifficulty = 1.0, minDifficulty = 0.10, maxDifficulty = 10.0;
-    const double defaultSpeed = 1.0, minSpeed = 0.10, maxSpeed = 10.0;
-    const int maxKeyLength = 20, maxValueLength = 40;
-
-    // Initialisation avec des valeurs par défaut
-    strncpy(theme, defaultTheme, sizeof(defaultTheme));  
-    *difficulty = defaultDifficulty;
-    *speed = defaultSpeed;
-
-    FILE* f = fopen("timberman.config", "r");
-
-    if (f == NULL) {
-
-        printf("Erreur lors de l'ouverture du fichier de configuration : %s\n", strerror(errno));
-
-        return;
-
-    }
-
-    char key[maxKeyLength + 1], value[maxValueLength + 1];
-
-    while (fscanf(f, "%20s %40s", key, value) == 2) {  // Modification ici pour vérifier le succès de fscanf
-
-        if (strncmp(key, "theme", 5) == 0) {
-
-            strncpy(theme, value, maxValueLength);  // Sécuriser la copie pour éviter le dépassement de tampon
-            theme[maxValueLength] = '\0';  // S'assurer que la chaîne est terminée correctement
-
-        } else if (strncmp(key, "difficulty", 10) == 0) {
-
-            *difficulty = atof(value);
-
-            if (*difficulty < minDifficulty || *difficulty > maxDifficulty) {
-
-                printf("Erreur: La difficulté doit être comprise entre %.2f et %.2f ! Passage à la valeure par défaut (%.2f)\n", minDifficulty, maxDifficulty, defaultDifficulty);
-
-                *difficulty = defaultDifficulty;
-
-            }
-
-        } else if (strncmp(key, "speed", 5) == 0) {
-
-            *speed = atof(value);
-
-            if (*speed < minSpeed || *speed > maxSpeed) {
-
-                printf("Erreur: La vitesse doit être comprise entre %.2f et %.2f ! Passage à la valeure par défaut (%.2f)\n", minSpeed, maxSpeed, defaultSpeed);
-
-                *speed = defaultSpeed;
-
-            }
-
-        }
-
-    }
-
-    fclose(f);
-
-}
-
-void verifyConfigFileExistence(const char* fichierConfig) {
-
-    FILE* f = fopen(fichierConfig, "r");
-
-    if (f == NULL) {
-
-        f = fopen(fichierConfig, "w");
-
-        if (f == NULL) {
-
-            printf("Erreur lors de la création du fichier de configuration : %s\n", strerror(errno));
-
-            return;
-
-        }
-
-        fprintf(f, "theme = default\n");
-        fprintf(f, "difficulty = 1.00\n");
-        fprintf(f, "speed = 1.00\n");
-
-        fclose(f);
-
-    } else {
-
-        fclose(f);
-
-    }
-
-}
-
 
 int main(int argc, char *argv[]) {
-
-    char theme[100] = "default";
-    double difficulty = 1.00;
-    double speed = 1.00;
-
-    verifyConfigFileExistence("timberman.config");
-    readConfigFile(theme, &difficulty, &speed);
-
-    // Utiliser les valeurs lues pour modifier les paramètres de votre jeu
-
-    printf("Thème : %s\n", theme);
-    printf("Coéfficient de difficulté : %.2f\n", difficulty);
-    printf("Coéfficient d'accélération de la vitesse : %.2f\n", speed);
-
-
     
     // Initialisation de SDL
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
