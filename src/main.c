@@ -279,6 +279,67 @@ void verifyHighScoreFileExistence(int score) {
     fclose(f);
 }
 
+int afficherPopup(SDL_Renderer* renderer, int score) {
+    // Charger la texture pour la popup de Game Over
+    int quit = 0;
+    while(quit == 0){
+        SDL_Texture* textureGameOver = chargerTexture(renderer, "src/images/GameOver.png");
+        SDL_Rect rectGameOver = {264.5, 62, 271, 576};
+        // Dessiner la popup
+        SDL_RenderCopy(renderer, textureGameOver, NULL, &rectGameOver);
+
+        SDL_Texture *texturePlayAgain = chargerTexture(renderer, "src/images/playagain.png");
+        SDL_Rect rectPlayAgain = {306.25, 400, 187.5, 62.5};
+        SDL_RenderCopy(renderer, texturePlayAgain, NULL, &rectPlayAgain);
+
+        SDL_Texture *textureMainMenu = chargerTexture(renderer, "src/images/menu.png");
+        SDL_Rect rectMainMenu = {306.25, 500, 187.5, 62.5};
+        SDL_RenderCopy(renderer, textureMainMenu, NULL, &rectMainMenu);
+
+        // Afficher le score
+        TTF_Font* scoreFont = TTF_OpenFont("src/fonts/KOMIKAP_.ttf", 40);
+        SDL_Color couleurTexte = { 255, 255, 255 }; // Blanc
+        char scoreTexte[50];
+        snprintf(scoreTexte, sizeof(scoreTexte), "Score: %d", score);
+        SDL_Surface* surfaceScore = TTF_RenderText_Solid(scoreFont, scoreTexte, couleurTexte);
+        SDL_Texture* textureScore = SDL_CreateTextureFromSurface(renderer, surfaceScore);
+        SDL_Rect rectScore = { 300, 225, surfaceScore->w, surfaceScore->h };
+        SDL_RenderCopy(renderer, textureScore, NULL, &rectScore);
+
+        // boutton cliquable
+        SDL_PumpEvents();
+        int x, y;
+        Uint32 buttons = SDL_GetMouseState(&x, &y);
+
+        if (buttons & SDL_BUTTON(SDL_BUTTON_LEFT) &&
+            x >= rectMainMenu.x && x < rectMainMenu.x + rectMainMenu.w &&
+            y >= rectMainMenu.y && y < rectMainMenu.y + rectMainMenu.h) {
+            printf("Bouton MainMenu cliqué!\n");
+            quit = afficherMenu(renderer);
+            return quit;
+        }
+
+        // Vérifier si le clic gauche de la souris se produit sur le bouton "PlayAgain"
+        if (buttons & SDL_BUTTON(SDL_BUTTON_LEFT) &&
+            x >= rectPlayAgain.x && x < rectPlayAgain.x + rectPlayAgain.w &&
+            y >= rectPlayAgain.y && y < rectPlayAgain.y + rectPlayAgain.h) {
+            printf("Bouton PlayAgain cliqué!\n");
+            return 1;
+            // Réinitialiser le jeu ici, par exemple, en remettant le personnage à sa position initiale
+        }
+        SDL_RenderPresent(renderer);
+
+
+        // Libérer les ressources de la popup
+        SDL_FreeSurface(surfaceScore);
+        SDL_DestroyTexture(textureScore);
+        TTF_CloseFont(scoreFont);
+        SDL_DestroyTexture(textureGameOver);
+        SDL_DestroyTexture(textureMainMenu);
+        SDL_DestroyTexture(texturePlayAgain);
+        SDL_RenderPresent(renderer);
+    }
+}
 
 int main(int argc, char *argv[]) {
 
@@ -382,38 +443,20 @@ int main(int argc, char *argv[]) {
                 break;
         }
     }
+
     int Jouer = 0;
-    int menuActif = 1;
+   
+    // Effacer le renderer
+    SDL_RenderClear(renderer);
 
-    while (menuActif) {
-        SDL_Event event;
-        while (SDL_PollEvent(&event)) {
-            if (event.type == SDL_QUIT) {
-                menuActif = 0; // Quitter le jeu si la fenêtre est fermée depuis le menu
-            } else if (event.type == SDL_KEYDOWN) {
-                switch (event.key.keysym.sym) {
-                    case SDLK_RETURN:
-                        menuActif = 0; // Quitter le menu si la touche Entrée est enfoncée
-                        break;
-                    // Ajoutez d'autres cas pour d'autres touches du menu si nécessaire
-                }
-            }
-        }
+    // Afficher le menu
+    Jouer = afficherMenu(renderer);
 
-        // Effacer le renderer
-        SDL_RenderClear(renderer);
+    // Rafraîchir l'écran
+    SDL_RenderPresent(renderer);
 
-        // Afficher le menu
-        Jouer = afficherMenu(renderer);
-        if(Jouer != 0){
-            menuActif = 0;
-        }
-        // Rafraîchir l'écran
-        SDL_RenderPresent(renderer);
-    }
     // score
     int score = 0;
-
 
     // Boucle principale du jeu
     SDL_Event event;
@@ -443,18 +486,23 @@ int main(int argc, char *argv[]) {
                 score++;
                 printf("%d\n",score);
                 for (int i = 0; i < 5; ++i) {
-                    branches[i].rect.y += 120;
+                    if(branches[i].rect.y < 480){
+                        branches[i].rect.y += 120;
+                    }else{
+                        branches[i].rect.y += 600;
+                    }
                 }
-            }
-        }
+                for (int i = 0; i < 5; ++i) {
+                    if (detecterCollision(rectPersonnage, branches[i].rect)) {
+                        printf("Aie!\n");
 
-        for (int i = 0; i < 5; ++i) {
-            if (detecterCollision(rectPersonnage, branches[i].rect)) {
-                printf("Aie!\n");
+                        Jouer = afficherPopup(renderer, score);
 
-                verifyHighScoreFileExistence(score);
-                score = 0;
-                // Ajoutez ici le code pour gérer la collision (par exemple, arrêter le jeu)
+                        verifyHighScoreFileExistence(score);
+                        score = 0;
+                        // Ajoutez ici le code pour gérer la collision (par exemple, arrêter le jeu)
+                    }
+                }
             }
         }
 
@@ -492,6 +540,20 @@ int main(int argc, char *argv[]) {
         SDL_Rect rectHache = { rectPersonnage.x, rectPersonnage.y + 70, 152, 28 };  // Position et taille de la hache (ajustez selon vos besoins)
         SDL_RenderCopyEx(renderer, textureHache, NULL, &rectHache, 0, NULL, flip);
 
+        // Afficher le score
+        TTF_Font* scoreFont = TTF_OpenFont("src/fonts/KOMIKAP_.ttf", 40);
+        SDL_Color couleurTexte = { 255, 255, 255 }; // Blanc
+        char scoreTexte[50];
+        snprintf(scoreTexte, sizeof(scoreTexte), "%d", score);
+        SDL_Surface* surfaceScore = TTF_RenderText_Solid(scoreFont, scoreTexte, couleurTexte);
+        SDL_Texture* textureScore = SDL_CreateTextureFromSurface(renderer, surfaceScore);
+        SDL_Rect rectScore = { 20, 15, surfaceScore->w, surfaceScore->h };
+        SDL_RenderCopy(renderer, textureScore, NULL, &rectScore);
+
+        SDL_FreeSurface(surfaceScore);
+        SDL_DestroyTexture(textureScore);
+        TTF_CloseFont(scoreFont);
+
         // Rafraîchir l'écran
         SDL_RenderPresent(renderer);
     }
@@ -513,60 +575,73 @@ int main(int argc, char *argv[]) {
 
 
 int afficherMenu(SDL_Renderer *renderer) {
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);  // Couleur noire
-    SDL_RenderClear(renderer);
+    int quit = 0;
+    while(quit == 0){
+        SDL_Event event;
+        while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_QUIT) {
+                return 2; // Quitter le jeu si la fenêtre est fermée depuis le menu
+            } else if (event.type == SDL_KEYDOWN) {
+                switch (event.key.keysym.sym) {
+                    case SDLK_RETURN:
+                        return 2; // Quitter le menu si la touche Entrée est enfoncée
+                        break;
+                    // Ajoutez d'autres cas pour d'autres touches du menu si nécessaire
+                }
+            }
+        }
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);  // Couleur noire
+        SDL_RenderClear(renderer);
 
-    // Charger l'image de fond du menu
-    SDL_Texture *textureMenu = chargerTexture(renderer, "src/images/menu_backround.png");
-    SDL_Rect rectMenu = {0, 0, 800, 700};  // Ajustez la taille de la fenêtre
-    SDL_RenderCopy(renderer, textureMenu, NULL, &rectMenu);
+        // Charger l'image de fond du menu
+        SDL_Texture *textureMenu = chargerTexture(renderer, "src/images/menu_backround.png");
+        SDL_Rect rectMenu = {0, 0, 800, 700};  // Ajustez la taille de la fenêtre
+        SDL_RenderCopy(renderer, textureMenu, NULL, &rectMenu);
 
-    // Charger les textures des boutons
-    SDL_Texture *textureBoutonStart = chargerTexture(renderer, "src/images/start.png");
-    SDL_Texture *textureBoutonHighScore = chargerTexture(renderer, "src/images/highscore.png");
-    SDL_Texture *textureBoutonExit = chargerTexture(renderer, "src/images/exit.png");
+        // Charger les textures des boutons
+        SDL_Texture *textureBoutonStart = chargerTexture(renderer, "src/images/start.png");
+        SDL_Texture *textureBoutonHighScore = chargerTexture(renderer, "src/images/highscore.png");
+        SDL_Texture *textureBoutonExit = chargerTexture(renderer, "src/images/exit.png");
 
-    int largeurBouton = 202.5;
-    int hauteurBouton = 72;
+        int largeurBouton = 202.5;
+        int hauteurBouton = 72;
 
-    // Exemple : Dessiner le bouton "High Score"
-    SDL_Rect rectBoutonHighScore = {300, 200, largeurBouton, hauteurBouton};  // Ajustez la position et la taille
-    SDL_RenderCopy(renderer, textureBoutonHighScore, NULL, &rectBoutonHighScore);
+        // Exemple : Dessiner le bouton "High Score"
+        SDL_Rect rectBoutonHighScore = {300, 200, largeurBouton, hauteurBouton};  // Ajustez la position et la taille
+        SDL_RenderCopy(renderer, textureBoutonHighScore, NULL, &rectBoutonHighScore);
 
-    // Exemple : Dessiner le bouton "Start"
-    SDL_Rect rectBoutonStart = {265, 300, 270, 96};  // Ajustez la position et la taille
-    SDL_RenderCopy(renderer, textureBoutonStart, NULL, &rectBoutonStart);
+        // Exemple : Dessiner le bouton "Start"
+        SDL_Rect rectBoutonStart = {265, 300, 270, 96};  // Ajustez la position et la taille
+        SDL_RenderCopy(renderer, textureBoutonStart, NULL, &rectBoutonStart);
 
-    // Exemple : Dessiner le bouton "Exit"
-    SDL_Rect rectBoutonExit = {300, 424, largeurBouton, hauteurBouton};  // Ajustez la position et la taille
-    SDL_RenderCopy(renderer, textureBoutonExit, NULL, &rectBoutonExit);
+        // Exemple : Dessiner le bouton "Exit"
+        SDL_Rect rectBoutonExit = {300, 424, largeurBouton, hauteurBouton};  // Ajustez la position et la taille
+        SDL_RenderCopy(renderer, textureBoutonExit, NULL, &rectBoutonExit);
 
-    // Détecter les clics de souris
-    SDL_PumpEvents();
-    int x, y;
-    Uint32 buttons = SDL_GetMouseState(&x, &y);
+        // Détecter les clics de souris
+        SDL_PumpEvents();
+        int x, y;
+        Uint32 buttons = SDL_GetMouseState(&x, &y);
 
-    int jouer = 0;
-    // Vérifier si le clic gauche de la souris se produit sur le bouton "Start"
-    if (buttons & SDL_BUTTON(SDL_BUTTON_LEFT) && x >= rectBoutonStart.x && x < rectBoutonStart.x + rectBoutonStart.w &&
-        y >= rectBoutonStart.y && y < rectBoutonStart.y + rectBoutonStart.h) {
-        printf("Bouton Start clique!\n");
-        jouer = 1;
+        // Vérifier si le clic gauche de la souris se produit sur le bouton "Start"
+        if (buttons & SDL_BUTTON(SDL_BUTTON_LEFT) && x >= rectBoutonStart.x && x < rectBoutonStart.x + rectBoutonStart.w &&
+            y >= rectBoutonStart.y && y < rectBoutonStart.y + rectBoutonStart.h) {
+            printf("Bouton Start clique!\n");
+            return 1;
+        }
+
+        if (buttons & SDL_BUTTON(SDL_BUTTON_LEFT) && x >= rectBoutonExit.x && x < rectBoutonExit.x + rectBoutonExit.w &&
+            y >= rectBoutonExit.y && y < rectBoutonExit.y + rectBoutonExit.h) {
+            printf("Bouton exit clique!\n");
+            return 2;
+        }
+
+        SDL_RenderPresent(renderer);
+
+        // Libérer les textures des boutons
+        SDL_DestroyTexture(textureBoutonStart);
+        SDL_DestroyTexture(textureBoutonHighScore);
+        SDL_DestroyTexture(textureBoutonExit);
+        SDL_DestroyTexture(textureMenu);
     }
-
-    if (buttons & SDL_BUTTON(SDL_BUTTON_LEFT) && x >= rectBoutonExit.x && x < rectBoutonExit.x + rectBoutonExit.w &&
-        y >= rectBoutonExit.y && y < rectBoutonExit.y + rectBoutonExit.h) {
-        printf("Bouton exit clique!\n");
-        jouer = 2;
-    }
-
-    return jouer;
-    SDL_RenderPresent(renderer);
-
-    // Libérer les textures des boutons
-    SDL_DestroyTexture(textureBoutonStart);
-    SDL_DestroyTexture(textureBoutonHighScore);
-    SDL_DestroyTexture(textureBoutonExit);
-
-    SDL_DestroyTexture(textureMenu);
 }
