@@ -151,7 +151,7 @@ void readConfigFile(char* theme, double* difficulty, double* speed) {
 
                 } else {
 
-                    printf("Thème non pris en charge : %s\n", value);
+                    printf("Theme non pris en charge : %s\n\n Le theme par defaut a ete applique !\n\n", value);
 
                     strncpy(theme, defaultTheme, maxValueLength);
                     theme[maxValueLength] = '\0';
@@ -167,7 +167,7 @@ void readConfigFile(char* theme, double* difficulty, double* speed) {
 
                 if (*difficulty < minDifficulty || *difficulty > maxDifficulty) {
 
-                    printf("Erreur: La difficulté doit être comprise entre %.2f et %.2f ! Passage à la valeur par défaut (%.2f)\n", minDifficulty, maxDifficulty, defaultDifficulty);
+                    printf("Erreur: La difficulte doit être comprise entre %.2f et %.2f ! Passage à la valeur par defaut (%.2f)\n\n", minDifficulty, maxDifficulty, defaultDifficulty);
 
                     *difficulty = defaultDifficulty;
 
@@ -182,7 +182,7 @@ void readConfigFile(char* theme, double* difficulty, double* speed) {
 
                 if (*speed < minSpeed || *speed > maxSpeed) {
 
-                    printf("Erreur: La vitesse doit être comprise entre %.2f et %.2f ! Passage à la valeur par défaut (%.2f)\n", minSpeed, maxSpeed, defaultSpeed);
+                    printf("Erreur: La vitesse doit etre comprise entre %.2f et %.2f ! Passage a la valeur par defaut (%.2f)\n\n", minSpeed, maxSpeed, defaultSpeed);
 
                     *speed = defaultSpeed;
 
@@ -209,7 +209,7 @@ void verifyConfigFileExistence(const char* fichierConfig) {
 
         if (f == NULL) {
 
-            printf("Erreur lors de la création du fichier de configuration : %s\n", strerror(errno)); // Affichage de l'erreur si le fichier n'a pas pu être créé
+            printf("Erreur lors de la creation du fichier de configuration : %s\n", strerror(errno)); // Affichage de l'erreur si le fichier n'a pas pu être créé
 
             return;
 
@@ -246,10 +246,10 @@ int main(int argc, char *argv[]) {
     readConfigFile(theme, &difficulty, &speed);
 
     // Pour debug - Affichage des valeurs de configuration
-    printf("Paramètres de configuration :\n");
-    printf("Thème : %s\n", theme);
-    printf("Coéfficient de difficulté : %.2f\n", difficulty);
-    printf("Coéfficient d'accélération de la vitesse : %.2f\n", speed);
+    printf("\n\nParametres de configuration :\n\n");
+    printf("Theme : %s\n", theme);
+    printf("Coefficient de difficulte : %.2f\n", difficulty);
+    printf("Coefficient d'acceleration de la vitesse : %.2f\n", speed);
 
 
     
@@ -276,7 +276,7 @@ int main(int argc, char *argv[]) {
     // Créer la fenêtre
     SDL_Window *fenetre = SDL_CreateWindow("TimberMan", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800, 700, SDL_WINDOW_SHOWN);
     if (fenetre == NULL) {
-        fprintf(stderr, "Erreur lors de la création de la fenêtre : %s\n", SDL_GetError());
+        fprintf(stderr, "Erreur lors de la creation de la fenêtre : %s\n", SDL_GetError());
         SDL_Quit();
         return 1;
     }
@@ -284,7 +284,7 @@ int main(int argc, char *argv[]) {
     // Créer le renderer
     SDL_Renderer *renderer = SDL_CreateRenderer(fenetre, -1, SDL_RENDERER_ACCELERATED);
     if (renderer == NULL) {
-        fprintf(stderr, "Erreur lors de la création du renderer : %s\n", SDL_GetError());
+        fprintf(stderr, "Erreur lors de la creation du renderer : %s\n", SDL_GetError());
         SDL_DestroyWindow(fenetre);
         SDL_Quit();
         return 1;
@@ -398,7 +398,7 @@ int main(int argc, char *argv[]) {
 
         for (int i = 0; i < 5; ++i) {
             if (detecterCollision(rectPersonnage, branches[i].rect)) {
-                printf("Touché!\n");
+                printf("Aie!\n");
                 // Ajoutez ici le code pour gérer la collision (par exemple, arrêter le jeu)
             }
         }
@@ -495,13 +495,13 @@ int afficherMenu(SDL_Renderer *renderer) {
     // Vérifier si le clic gauche de la souris se produit sur le bouton "Start"
     if (buttons & SDL_BUTTON(SDL_BUTTON_LEFT) && x >= rectBoutonStart.x && x < rectBoutonStart.x + rectBoutonStart.w &&
         y >= rectBoutonStart.y && y < rectBoutonStart.y + rectBoutonStart.h) {
-        printf("Bouton Start cliqué!\n");
+        printf("Bouton Start clique!\n");
         jouer = 1;
     }
 
     if (buttons & SDL_BUTTON(SDL_BUTTON_LEFT) && x >= rectBoutonExit.x && x < rectBoutonExit.x + rectBoutonExit.w &&
         y >= rectBoutonExit.y && y < rectBoutonExit.y + rectBoutonExit.h) {
-        printf("Bouton exit cliqué!\n");
+        printf("Bouton exit clique!\n");
         jouer = 2;
     }
 
