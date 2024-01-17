@@ -5,15 +5,15 @@
         > gcc src/*.c -o bin/prog -I include -L lib -lmingw32 -lSDL2main -lSDL2
 */
 
-#include <SDL.h>
-#include <SDL_image.h>
-#include <SDL_ttf.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
 #include <errno.h>
 #include <time.h>
+#include <SDL.h>
+#include <SDL_image.h>
+#include <SDL_ttf.h>
 #include <SDL_mouse.h>
 
 int afficherMenu(SDL_Renderer *renderer);
@@ -84,7 +84,6 @@ int detecterCollision(SDL_Rect rectJoueur, SDL_Rect rectBranche) {
             rectJoueur.y < rectBranche.y + rectBranche.h &&
             rectJoueur.y + rectJoueur.h > rectBranche.y);
 }
-
 
 // Définition des thèmes supportés
 const char* supportedThemes[] = {"default", "forest", "space", "ocean"};
@@ -250,8 +249,7 @@ int main(int argc, char *argv[]) {
     printf("Theme : %s\n", theme);
     printf("Coefficient de difficulte : %.2f\n", difficulty);
     printf("Coefficient d'acceleration de la vitesse : %.2f\n", speed);
-
-
+  
     
     // Initialisation de SDL
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
