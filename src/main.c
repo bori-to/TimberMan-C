@@ -15,6 +15,7 @@
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 #include <SDL_mouse.h>
+#define MAX_SCORES 10
 
 int afficherMenu(SDL_Renderer *renderer);
 int lancerJeu(SDL_Renderer *renderer);
@@ -231,6 +232,51 @@ void verifyConfigFileExistence(const char* fichierConfig) {
 }
 
 
+
+// Fonction pour comparer les entiers par ordre décroissant pour qsort
+int comparerIntDesc(const void* a, const void* b) {
+    return (*(int*)b - *(int*)a);
+}
+
+void verifyHighScoreFileExistence(int score) {
+
+FILE* f = fopen("highscore/highscore.txt", "a+");  // Ouvre le fichier en mode lecture/écriture
+
+    if (f == NULL) {
+        printf("Erreur lors de l'ouverture du fichier de score : %s\n", strerror(errno));
+        return;
+    }
+    
+    // Lire les scores existants
+    int scores[MAX_SCORES];
+    int numScores = 0;
+
+    // Vérifier si le score existe déjà
+    while (fscanf(f, "%d", &scores[numScores]) == 1 && numScores < MAX_SCORES) {
+        numScores++;
+    }
+
+    // Ajouter le nouveau score uniquement s'il est supérieur au plus bas des scores actuels
+    if (numScores < MAX_SCORES || score > scores[MAX_SCORES - 1]) {
+        scores[numScores++] = score;
+
+        // Trier les scores par ordre décroissant
+        qsort(scores, numScores, sizeof(int), comparerIntDesc);
+
+        // Tronquer le fichier
+        freopen("highscore/highscore.txt", "w", f);
+
+        // Écrire de nouveau les 10 meilleurs scores dans le fichier
+        for (int i = 0; i < numScores && i < MAX_SCORES; i++) {
+            fprintf(f, "%d\n", scores[i]);
+        }
+    }
+
+    fclose(f);
+}
+
+
+
 int main(int argc, char *argv[]) {
 
     // Déclaration des variables de configuration
@@ -362,7 +408,10 @@ int main(int argc, char *argv[]) {
         // Rafraîchir l'écran
         SDL_RenderPresent(renderer);
     }
-    
+    // score
+    int score = 0;
+
+
     // Boucle principale du jeu
     SDL_Event event;
     srand(time(NULL));
@@ -388,6 +437,8 @@ int main(int argc, char *argv[]) {
                         break;
                     // Ajoutez d'autres cas pour d'autres touches si nécessaire
                 }
+                score++;
+                printf("%d\n",score);
                 for (int i = 0; i < 5; ++i) {
                     branches[i].rect.y += 120;
                 }
@@ -397,6 +448,9 @@ int main(int argc, char *argv[]) {
         for (int i = 0; i < 5; ++i) {
             if (detecterCollision(rectPersonnage, branches[i].rect)) {
                 printf("Aie!\n");
+
+                verifyHighScoreFileExistence(score-1);
+                score = 0;
                 // Ajoutez ici le code pour gérer la collision (par exemple, arrêter le jeu)
             }
         }
