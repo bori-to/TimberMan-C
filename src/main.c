@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 #include <errno.h>
 #include <time.h>
 #include <SDL_mouse.h>
@@ -84,59 +85,108 @@ int detecterCollision(SDL_Rect rectJoueur, SDL_Rect rectBranche) {
             rectJoueur.y + rectJoueur.h > rectBranche.y);
 }
 
+
+// Définition des thèmes supportés
+const char* supportedThemes[] = {"default", "forest", "space", "ocean"};
+const int supportedThemesCount = sizeof(supportedThemes) / sizeof(supportedThemes[0]);
+
+
+// Vérifie si un thème est supporté
+bool isThemeSupported(const char* theme) {
+
+    for (int i = 0; i < supportedThemesCount; i++) {
+
+        if (strcmp(theme, supportedThemes[i]) == 0) {
+
+            return true;
+
+        }
+
+    }
+
+    return false;
+    
+}
+
+
+// Lit le fichier de configuration et récupère les valeurs
 void readConfigFile(char* theme, double* difficulty, double* speed) {
 
-    // Constantes pour les valeurs par défaut et les limites
+    // Définition constantes
+
     const char defaultTheme[] = "default";
     const double defaultDifficulty = 1.0, minDifficulty = 0.10, maxDifficulty = 10.0;
     const double defaultSpeed = 1.0, minSpeed = 0.10, maxSpeed = 10.0;
     const int maxKeyLength = 20, maxValueLength = 40;
 
     // Initialisation avec des valeurs par défaut
-    strncpy(theme, defaultTheme, sizeof(defaultTheme));  
+    strncpy(theme, defaultTheme, sizeof(defaultTheme));
     *difficulty = defaultDifficulty;
     *speed = defaultSpeed;
 
-    FILE* f = fopen("timberman.config", "r");
+    FILE* f = fopen("config/timberman.config", "r"); // Ouverture en lecture seule du fichier de config
 
     if (f == NULL) {
 
-        printf("Erreur lors de l'ouverture du fichier de configuration : %s\n", strerror(errno));
+        printf("Erreur lors de l'ouverture du fichier de configuration : %s\n", strerror(errno)); // Affichage de l'erreur si le fichier n'a pas pu être ouvert
 
         return;
 
     }
 
+    char line[100];
     char key[maxKeyLength + 1], value[maxValueLength + 1];
 
-    while (fscanf(f, "%20s %40s", key, value) == 2) {  // Modification ici pour vérifier le succès de fscanf
+    while (fgets(line, sizeof(line), f)) { // Lecture du fichier ligne par ligne
 
-        if (strncmp(key, "theme", 5) == 0) {
+        if (sscanf(line, "%20s = %40s", key, value) == 2) { // Lecture de la ligne et vérification du format
 
-            strncpy(theme, value, maxValueLength);  // Sécuriser la copie pour éviter le dépassement de tampon
-            theme[maxValueLength] = '\0';  // S'assurer que la chaîne est terminée correctement
+            // Vérification et traitement pour le thème
+            if (strncmp(key, "theme", 20) == 0) {
 
-        } else if (strncmp(key, "difficulty", 10) == 0) {
+                if (isThemeSupported(value)) {
 
-            *difficulty = atof(value);
+                    strncpy(theme, value, maxValueLength);
+                    theme[maxValueLength] = '\0';
 
-            if (*difficulty < minDifficulty || *difficulty > maxDifficulty) {
+                } else {
 
-                printf("Erreur: La difficulté doit être comprise entre %.2f et %.2f ! Passage à la valeure par défaut (%.2f)\n", minDifficulty, maxDifficulty, defaultDifficulty);
+                    printf("Thème non pris en charge : %s\n", value);
 
-                *difficulty = defaultDifficulty;
+                    strncpy(theme, defaultTheme, maxValueLength);
+                    theme[maxValueLength] = '\0';
+
+                }
 
             }
 
-        } else if (strncmp(key, "speed", 5) == 0) {
+            // Vérification et traitement pour la difficulté
+            if (strncmp(key, "difficulty", 10) == 0) {
 
-            *speed = atof(value);
+                *difficulty = atof(value);
 
-            if (*speed < minSpeed || *speed > maxSpeed) {
+                if (*difficulty < minDifficulty || *difficulty > maxDifficulty) {
 
-                printf("Erreur: La vitesse doit être comprise entre %.2f et %.2f ! Passage à la valeure par défaut (%.2f)\n", minSpeed, maxSpeed, defaultSpeed);
+                    printf("Erreur: La difficulté doit être comprise entre %.2f et %.2f ! Passage à la valeur par défaut (%.2f)\n", minDifficulty, maxDifficulty, defaultDifficulty);
 
-                *speed = defaultSpeed;
+                    *difficulty = defaultDifficulty;
+
+                }
+
+            }
+
+            // Vérification et traitement pour la vitesse
+            if (strncmp(key, "speed", 5) == 0) {
+
+                *speed = atof(value);
+
+                if (*speed < minSpeed || *speed > maxSpeed) {
+
+                    printf("Erreur: La vitesse doit être comprise entre %.2f et %.2f ! Passage à la valeur par défaut (%.2f)\n", minSpeed, maxSpeed, defaultSpeed);
+
+                    *speed = defaultSpeed;
+
+                }
 
             }
 
@@ -144,35 +194,38 @@ void readConfigFile(char* theme, double* difficulty, double* speed) {
 
     }
 
-    fclose(f);
-
+    fclose(f); // Fermeture du fichier de config
 }
 
+
+// Vérifie l'existence du fichier de configuration et le crée s'il n'existe pas
 void verifyConfigFileExistence(const char* fichierConfig) {
 
-    FILE* f = fopen(fichierConfig, "r");
+    FILE* f = fopen(fichierConfig, "r"); // Ouverture en lecture seule du fichier de config
 
     if (f == NULL) {
 
-        f = fopen(fichierConfig, "w");
+        f = fopen(fichierConfig, "w"); // Création du fichier de config s'il n'existe pas
 
         if (f == NULL) {
 
-            printf("Erreur lors de la création du fichier de configuration : %s\n", strerror(errno));
+            printf("Erreur lors de la création du fichier de configuration : %s\n", strerror(errno)); // Affichage de l'erreur si le fichier n'a pas pu être créé
 
             return;
 
         }
 
+        // Ecriture des valeurs par défaut dans le fichier de config
+
         fprintf(f, "theme = default\n");
         fprintf(f, "difficulty = 1.00\n");
         fprintf(f, "speed = 1.00\n");
 
-        fclose(f);
+        fclose(f); // Fermeture du fichier de config
 
     } else {
 
-        fclose(f);
+        fclose(f); // Fermeture du fichier de config
 
     }
 
@@ -181,15 +234,19 @@ void verifyConfigFileExistence(const char* fichierConfig) {
 
 int main(int argc, char *argv[]) {
 
-    char theme[100] = "default";
-    double difficulty = 1.00;
-    double speed = 1.00;
+    // Déclaration des variables de configuration
 
-    verifyConfigFileExistence("timberman.config");
+    char theme[100];
+    double difficulty, speed;
+
+    // Vérification de l'existence du fichier de configuration et création si nécessaire
+    verifyConfigFileExistence("config/timberman.config");
+
+    // Lecture du fichier de configuration et récupération des valeurs
     readConfigFile(theme, &difficulty, &speed);
 
-    // Utiliser les valeurs lues pour modifier les paramètres de votre jeu
-
+    // Pour debug - Affichage des valeurs de configuration
+    printf("Paramètres de configuration :\n");
     printf("Thème : %s\n", theme);
     printf("Coéfficient de difficulté : %.2f\n", difficulty);
     printf("Coéfficient d'accélération de la vitesse : %.2f\n", speed);
