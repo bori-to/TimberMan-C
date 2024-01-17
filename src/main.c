@@ -5,12 +5,15 @@
         > gcc src/*.c -o bin/prog -I include -L lib -lmingw32 -lSDL2main -lSDL2
 */
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+#include <errno.h>
+#include <time.h>
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
 #include <SDL_mouse.h>
 
 int afficherMenu(SDL_Renderer *renderer);
@@ -82,8 +85,171 @@ int detecterCollision(SDL_Rect rectJoueur, SDL_Rect rectBranche) {
             rectJoueur.y + rectJoueur.h > rectBranche.y);
 }
 
+// Définition des thèmes supportés
+const char* supportedThemes[] = {"default", "forest", "space", "ocean"};
+const int supportedThemesCount = sizeof(supportedThemes) / sizeof(supportedThemes[0]);
+
+
+// Vérifie si un thème est supporté
+bool isThemeSupported(const char* theme) {
+
+    for (int i = 0; i < supportedThemesCount; i++) {
+
+        if (strcmp(theme, supportedThemes[i]) == 0) {
+
+            return true;
+
+        }
+
+    }
+
+    return false;
+    
+}
+
+
+// Lit le fichier de configuration et récupère les valeurs
+void readConfigFile(char* theme, double* difficulty, double* speed) {
+
+    // Définition constantes
+
+    const char defaultTheme[] = "default";
+    const double defaultDifficulty = 1.0, minDifficulty = 0.10, maxDifficulty = 10.0;
+    const double defaultSpeed = 1.0, minSpeed = 0.10, maxSpeed = 10.0;
+    const int maxKeyLength = 20, maxValueLength = 40;
+
+    // Initialisation avec des valeurs par défaut
+    strncpy(theme, defaultTheme, sizeof(defaultTheme));
+    *difficulty = defaultDifficulty;
+    *speed = defaultSpeed;
+
+    FILE* f = fopen("config/timberman.config", "r"); // Ouverture en lecture seule du fichier de config
+
+    if (f == NULL) {
+
+        printf("Erreur lors de l'ouverture du fichier de configuration : %s\n", strerror(errno)); // Affichage de l'erreur si le fichier n'a pas pu être ouvert
+
+        return;
+
+    }
+
+    char line[100];
+    char key[maxKeyLength + 1], value[maxValueLength + 1];
+
+    while (fgets(line, sizeof(line), f)) { // Lecture du fichier ligne par ligne
+
+        if (sscanf(line, "%20s = %40s", key, value) == 2) { // Lecture de la ligne et vérification du format
+
+            // Vérification et traitement pour le thème
+            if (strncmp(key, "theme", 20) == 0) {
+
+                if (isThemeSupported(value)) {
+
+                    strncpy(theme, value, maxValueLength);
+                    theme[maxValueLength] = '\0';
+
+                } else {
+
+                    printf("Theme non pris en charge : %s\n\n Le theme par defaut a ete applique !\n\n", value);
+
+                    strncpy(theme, defaultTheme, maxValueLength);
+                    theme[maxValueLength] = '\0';
+
+                }
+
+            }
+
+            // Vérification et traitement pour la difficulté
+            if (strncmp(key, "difficulty", 10) == 0) {
+
+                *difficulty = atof(value);
+
+                if (*difficulty < minDifficulty || *difficulty > maxDifficulty) {
+
+                    printf("Erreur: La difficulte doit être comprise entre %.2f et %.2f ! Passage à la valeur par defaut (%.2f)\n\n", minDifficulty, maxDifficulty, defaultDifficulty);
+
+                    *difficulty = defaultDifficulty;
+
+                }
+
+            }
+
+            // Vérification et traitement pour la vitesse
+            if (strncmp(key, "speed", 5) == 0) {
+
+                *speed = atof(value);
+
+                if (*speed < minSpeed || *speed > maxSpeed) {
+
+                    printf("Erreur: La vitesse doit etre comprise entre %.2f et %.2f ! Passage a la valeur par defaut (%.2f)\n\n", minSpeed, maxSpeed, defaultSpeed);
+
+                    *speed = defaultSpeed;
+
+                }
+
+            }
+
+        }
+
+    }
+
+    fclose(f); // Fermeture du fichier de config
+}
+
+
+// Vérifie l'existence du fichier de configuration et le crée s'il n'existe pas
+void verifyConfigFileExistence(const char* fichierConfig) {
+
+    FILE* f = fopen(fichierConfig, "r"); // Ouverture en lecture seule du fichier de config
+
+    if (f == NULL) {
+
+        f = fopen(fichierConfig, "w"); // Création du fichier de config s'il n'existe pas
+
+        if (f == NULL) {
+
+            printf("Erreur lors de la creation du fichier de configuration : %s\n", strerror(errno)); // Affichage de l'erreur si le fichier n'a pas pu être créé
+
+            return;
+
+        }
+
+        // Ecriture des valeurs par défaut dans le fichier de config
+
+        fprintf(f, "theme = default\n");
+        fprintf(f, "difficulty = 1.00\n");
+        fprintf(f, "speed = 1.00\n");
+
+        fclose(f); // Fermeture du fichier de config
+
+    } else {
+
+        fclose(f); // Fermeture du fichier de config
+
+    }
+
+}
+
 
 int main(int argc, char *argv[]) {
+
+    // Déclaration des variables de configuration
+
+    char theme[100];
+    double difficulty, speed;
+
+    // Vérification de l'existence du fichier de configuration et création si nécessaire
+    verifyConfigFileExistence("config/timberman.config");
+
+    // Lecture du fichier de configuration et récupération des valeurs
+    readConfigFile(theme, &difficulty, &speed);
+
+    // Pour debug - Affichage des valeurs de configuration
+    printf("\n\nParametres de configuration :\n\n");
+    printf("Theme : %s\n", theme);
+    printf("Coefficient de difficulte : %.2f\n", difficulty);
+    printf("Coefficient d'acceleration de la vitesse : %.2f\n", speed);
+  
     
     // Initialisation de SDL
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -108,7 +274,7 @@ int main(int argc, char *argv[]) {
     // Créer la fenêtre
     SDL_Window *fenetre = SDL_CreateWindow("TimberMan", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800, 700, SDL_WINDOW_SHOWN);
     if (fenetre == NULL) {
-        fprintf(stderr, "Erreur lors de la création de la fenêtre : %s\n", SDL_GetError());
+        fprintf(stderr, "Erreur lors de la creation de la fenêtre : %s\n", SDL_GetError());
         SDL_Quit();
         return 1;
     }
@@ -116,7 +282,7 @@ int main(int argc, char *argv[]) {
     // Créer le renderer
     SDL_Renderer *renderer = SDL_CreateRenderer(fenetre, -1, SDL_RENDERER_ACCELERATED);
     if (renderer == NULL) {
-        fprintf(stderr, "Erreur lors de la création du renderer : %s\n", SDL_GetError());
+        fprintf(stderr, "Erreur lors de la creation du renderer : %s\n", SDL_GetError());
         SDL_DestroyWindow(fenetre);
         SDL_Quit();
         return 1;
@@ -230,7 +396,7 @@ int main(int argc, char *argv[]) {
 
         for (int i = 0; i < 5; ++i) {
             if (detecterCollision(rectPersonnage, branches[i].rect)) {
-                printf("Touché!\n");
+                printf("Aie!\n");
                 // Ajoutez ici le code pour gérer la collision (par exemple, arrêter le jeu)
             }
         }
@@ -327,13 +493,13 @@ int afficherMenu(SDL_Renderer *renderer) {
     // Vérifier si le clic gauche de la souris se produit sur le bouton "Start"
     if (buttons & SDL_BUTTON(SDL_BUTTON_LEFT) && x >= rectBoutonStart.x && x < rectBoutonStart.x + rectBoutonStart.w &&
         y >= rectBoutonStart.y && y < rectBoutonStart.y + rectBoutonStart.h) {
-        printf("Bouton Start cliqué!\n");
+        printf("Bouton Start clique!\n");
         jouer = 1;
     }
 
     if (buttons & SDL_BUTTON(SDL_BUTTON_LEFT) && x >= rectBoutonExit.x && x < rectBoutonExit.x + rectBoutonExit.w &&
         y >= rectBoutonExit.y && y < rectBoutonExit.y + rectBoutonExit.h) {
-        printf("Bouton exit cliqué!\n");
+        printf("Bouton exit clique!\n");
         jouer = 2;
     }
 
