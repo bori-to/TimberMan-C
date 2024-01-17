@@ -240,19 +240,23 @@ int comparerIntDesc(const void* a, const void* b) {
 
 void verifyHighScoreFileExistence(int score) {
 
-FILE* f = fopen("highscore/highscore.txt", "a+");  // Ouvre le fichier en mode lecture/écriture
+    FILE* f = fopen("highscore/highscore.txt", "a+");  // Ouvre le fichier en mode lecture/écriture
 
     if (f == NULL) {
         printf("Erreur lors de l'ouverture du fichier de score : %s\n", strerror(errno));
         return;
     }
-    
+
     // Lire les scores existants
     int scores[MAX_SCORES];
     int numScores = 0;
 
     // Vérifier si le score existe déjà
     while (fscanf(f, "%d", &scores[numScores]) == 1 && numScores < MAX_SCORES) {
+        if (score == scores[numScores]) {
+            fclose(f);
+            return;  // Le score existe déjà, pas besoin de faire plus
+        }
         numScores++;
     }
 
@@ -274,7 +278,6 @@ FILE* f = fopen("highscore/highscore.txt", "a+");  // Ouvre le fichier en mode l
 
     fclose(f);
 }
-
 
 
 int main(int argc, char *argv[]) {
@@ -449,7 +452,7 @@ int main(int argc, char *argv[]) {
             if (detecterCollision(rectPersonnage, branches[i].rect)) {
                 printf("Aie!\n");
 
-                verifyHighScoreFileExistence(score-1);
+                verifyHighScoreFileExistence(score);
                 score = 0;
                 // Ajoutez ici le code pour gérer la collision (par exemple, arrêter le jeu)
             }
