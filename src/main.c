@@ -415,6 +415,10 @@ int main(int argc, char *argv[]) {
     SDL_Texture* textureHacheTape = chargerTexture(renderer, "src/images/playerTest4.png");
 
     SDL_Texture *textureBuche = chargerTexture(renderer, "src/images/particule.png");
+
+    SDL_Texture* textureTimerBorder = chargerTexture(renderer, "src/images/TimerBorder.png");
+    SDL_Rect rectTimerBorder = { 350, 10, 100, 34 };
+
     SDL_Rect rectBuche = { 325, 500, 150, 60 };  // Ajustez la position et la taille
 
     SDL_Rect rectPersonnage = { 470, 440, 150, 150 };
@@ -461,11 +465,33 @@ int main(int argc, char *argv[]) {
     // score
     int score = 0;
     int tapeEnCours = 0;
-
+    int tempsRestant = 3000;
+    Uint32 startTime; // Variable pour stocker le temps initial en millisecondes
+	Uint32 currentTime; // Variable pour stocker le temps actuel en millisecondes
+	int timing = 0;
+	int tempsBloque = 1;
     // Boucle principale du jeu
     SDL_Event event;
     srand(time(NULL));
     while (Jouer == 1) {
+    	// Vérifiez si le temps est écoulé
+    	if(tempsBloque == 0){
+    		currentTime = SDL_GetTicks();
+	    	currentTime = currentTime - timing;
+	    	Uint32 elapsedTime = currentTime - startTime;
+    		tempsRestant = 3000 - elapsedTime;
+		    if (tempsRestant <= 0) {
+		        // Le temps est écoulé, affichez Game Over et effectuez d'autres actions nécessaires
+		        timing = 0;
+		        tempsBloque = 1;
+		        Jouer = afficherPopup(renderer, score); // Utilisez votre fonction afficherPopupGameOver
+		        verifyHighScoreFileExistence(score);
+		        score = 0;
+		        tempsRestant = 3000; // Réinitialisez le temps
+		        startTime = SDL_GetTicks(); // Réinitialisez le temps de départ
+		    }
+		}
+
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
                 Jouer = 0;
@@ -475,6 +501,13 @@ int main(int argc, char *argv[]) {
                         // Déplacer le personnage à gauche de l'arbre
                         rectPersonnage.x = 175;  // Position à gauche de l'arbre
                         rectHache.x = 200;
+                        if(tempsBloque == 1){
+                        	startTime = SDL_GetTicks();
+                        	tempsBloque = 0;
+                        }
+                        if(tempsRestant <= 6000){
+                        	timing += 500;
+                        }
                         // Ajouter une nouvelle branche en haut du tronc
                         ajouterBrancheAleatoire(branches, textureBranche);
                         break;
@@ -482,6 +515,13 @@ int main(int argc, char *argv[]) {
                         // Déplacer le personnage à droite de l'arbre
                         rectPersonnage.x = 470;  // Position à droite de l'arbre
                         rectHache.x = 455;
+                        if(tempsBloque == 1){
+                        	startTime = SDL_GetTicks();
+                        	tempsBloque = 0;
+                        }
+                        if(tempsRestant <= 6000){
+                        	timing += 500;
+                        }
                         // Ajouter une nouvelle branche en haut du tronc
                         ajouterBrancheAleatoire(branches, textureBranche);
                         break;
@@ -499,16 +539,18 @@ int main(int argc, char *argv[]) {
                 for (int i = 0; i < 5; ++i) {
                     if (detecterCollision(rectPersonnage, branches[i].rect)) {
                         printf("Aie!\n");
-
+                        tempsRestant = 3000; // Réinitialisez le temps
+                        timing = 0;
+                        tempsBloque = 1;
                         Jouer = afficherPopup(renderer, score);
 
                         verifyHighScoreFileExistence(score);
+                        startTime = SDL_GetTicks();
                         score = 0;
                         // Ajoutez ici le code pour gérer la collision (par exemple, arrêter le jeu)
                     }
                 }
                 tapeEnCours = 1;
-        		printf("%d\n", tapeEnCours);
             }
         }
 
@@ -567,6 +609,13 @@ int main(int argc, char *argv[]) {
         SDL_Rect rectScore = { 20, 15, surfaceScore->w, surfaceScore->h };
         SDL_RenderCopy(renderer, textureScore, NULL, &rectScore);
 
+
+        SDL_RenderCopy(renderer, textureTimerBorder, NULL, &rectTimerBorder);
+        // Dessinez la barre rouge en fonction du temps restant
+	    SDL_Rect rectBarre = { 355, 15, tempsRestant / 74, 24 }; // Ajustez la taille et la position selon vos besoins
+	    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255); // Couleur rouge
+	    SDL_RenderFillRect(renderer, &rectBarre);
+
         SDL_FreeSurface(surfaceScore);
         SDL_DestroyTexture(textureScore);
         TTF_CloseFont(scoreFont);
@@ -578,6 +627,7 @@ int main(int argc, char *argv[]) {
     }
 
     // Libération des ressourcesv
+    SDL_DestroyTexture(textureTimerBorder);
     SDL_DestroyTexture(textureBuche);
     SDL_DestroyTexture(textureHacheTape);
     SDL_DestroyTexture(texturePersonnage);
