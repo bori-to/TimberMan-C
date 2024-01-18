@@ -15,6 +15,7 @@
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 #include <SDL_mouse.h>
+#include <SDL_mixer.h>
 #define MAX_SCORES 10
 
 int afficherMenu(SDL_Renderer *renderer);
@@ -381,6 +382,11 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
+    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
+	    fprintf(stderr, "Erreur lors de l'initialisation de SDL_mixer : %s\n", Mix_GetError());
+	    // Gestion de l'erreur
+	}
+
     // Créer la fenêtre
     SDL_Window *fenetre = SDL_CreateWindow("TimberMan", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800, 700, SDL_WINDOW_SHOWN);
     if (fenetre == NULL) {
@@ -406,7 +412,15 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    // Charger les textures
+    //Charger musique
+    Mix_Music* musiqueDeFond = Mix_LoadMUS("src/sound/foretSenonches.wav");
+    Mix_VolumeMusic(MIX_MAX_VOLUME / 2);
+    Mix_PlayMusic(musiqueDeFond, -1); // -1 pour répéter la musique indéfiniment
+
+    Mix_Chunk* SonCouperBois = Mix_LoadWAV("src/sound/treeChopSound.wav");
+    Mix_VolumeChunk(SonCouperBois, MIX_MAX_VOLUME / 5);
+
+    // Charger les texturess
     SDL_Texture *textureFond = chargerTexture(renderer, "src/images/background.png");
     SDL_Texture *texturePersonnage = chargerTexture(renderer, "src/images/playerTest3.png");
     SDL_Texture *textureArbre = chargerTexture(renderer, "src/images/tree.png");
@@ -510,6 +524,8 @@ int main(int argc, char *argv[]) {
                         }
                         // Ajouter une nouvelle branche en haut du tronc
                         ajouterBrancheAleatoire(branches, textureBranche);
+                        score++;
+                        Mix_PlayChannel(-1, SonCouperBois, 0);
                         break;
                     case SDLK_RIGHT:
                         // Déplacer le personnage à droite de l'arbre
@@ -524,10 +540,11 @@ int main(int argc, char *argv[]) {
                         }
                         // Ajouter une nouvelle branche en haut du tronc
                         ajouterBrancheAleatoire(branches, textureBranche);
+                        score++;
+                        Mix_PlayChannel(-1, SonCouperBois, 0);
                         break;
                     // Ajoutez d'autres cas pour d'autres touches si nécessaire
                 }
-                score++;
                 printf("%d\n",score);
                 for (int i = 0; i < 5; ++i) {
                     if(branches[i].rect.y < 480){
@@ -627,6 +644,8 @@ int main(int argc, char *argv[]) {
     }
 
     // Libération des ressourcesv
+    Mix_FreeMusic(musiqueDeFond);
+    Mix_FreeChunk(SonCouperBois);
     SDL_DestroyTexture(textureTimerBorder);
     SDL_DestroyTexture(textureBuche);
     SDL_DestroyTexture(textureHacheTape);
@@ -636,6 +655,8 @@ int main(int argc, char *argv[]) {
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(fenetre);
     TTF_CloseFont(police);
+    Mix_HaltMusic();
+	Mix_CloseAudio();
     TTF_Quit();
     IMG_Quit();
     SDL_Quit();
