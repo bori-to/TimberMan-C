@@ -408,13 +408,16 @@ int main(int argc, char *argv[]) {
 
     // Charger les textures
     SDL_Texture *textureFond = chargerTexture(renderer, "src/images/background.png");
-    SDL_Texture *texturePersonnage = chargerTexture(renderer, "src/images/player.png");
-    SDL_Texture* textureHache = chargerTexture(renderer, "src/images/axe.png");
+    SDL_Texture *texturePersonnage = chargerTexture(renderer, "src/images/playerTest3.png");
     SDL_Texture *textureArbre = chargerTexture(renderer, "src/images/tree.png");
     SDL_Texture* textureBranche = chargerTexture(renderer, "src/images/branch.png");
 
+    SDL_Texture* textureHacheTape = chargerTexture(renderer, "src/images/playerTest4.png");
 
-    SDL_Rect rectPersonnage = { 485, 440, 150, 150 };
+    SDL_Texture *textureBuche = chargerTexture(renderer, "src/images/particule.png");
+    SDL_Rect rectBuche = { 325, 500, 150, 60 };  // Ajustez la position et la taille
+
+    SDL_Rect rectPersonnage = { 470, 440, 150, 150 };
     SDL_Rect rectHache = { rectPersonnage.x + 20, rectPersonnage.y - 30, 50, 50 };
     // Orientation de la hache
     SDL_RendererFlip flipHache = SDL_FLIP_NONE;
@@ -457,6 +460,7 @@ int main(int argc, char *argv[]) {
 
     // score
     int score = 0;
+    int tapeEnCours = 0;
 
     // Boucle principale du jeu
     SDL_Event event;
@@ -469,14 +473,14 @@ int main(int argc, char *argv[]) {
                 switch (event.key.keysym.sym) {
                     case SDLK_LEFT:
                         // Déplacer le personnage à gauche de l'arbre
-                        rectPersonnage.x = 165;  // Position à gauche de l'arbre
+                        rectPersonnage.x = 175;  // Position à gauche de l'arbre
                         rectHache.x = 200;
                         // Ajouter une nouvelle branche en haut du tronc
                         ajouterBrancheAleatoire(branches, textureBranche);
                         break;
                     case SDLK_RIGHT:
                         // Déplacer le personnage à droite de l'arbre
-                        rectPersonnage.x = 485;  // Position à droite de l'arbre
+                        rectPersonnage.x = 470;  // Position à droite de l'arbre
                         rectHache.x = 455;
                         // Ajouter une nouvelle branche en haut du tronc
                         ajouterBrancheAleatoire(branches, textureBranche);
@@ -503,6 +507,8 @@ int main(int argc, char *argv[]) {
                         // Ajoutez ici le code pour gérer la collision (par exemple, arrêter le jeu)
                     }
                 }
+                tapeEnCours = 1;
+        		printf("%d\n", tapeEnCours);
             }
         }
 
@@ -529,16 +535,27 @@ int main(int argc, char *argv[]) {
 
         // Dessiner le personnage
         SDL_RendererFlip flip = SDL_FLIP_NONE;
-        if (rectPersonnage.x == 165) {
+        if (rectPersonnage.x == 175) {
             // Inverser l'image si le personnage regarde à gauche
             flip = SDL_FLIP_HORIZONTAL;
         }
         // Dessiner le personnage avec la hache
-        SDL_RenderCopyEx(renderer, texturePersonnage, NULL, &rectPersonnage, 0, NULL, flip);
-
-        // Dessiner la hache dans la main du personnage
-        SDL_Rect rectHache = { rectPersonnage.x, rectPersonnage.y + 70, 152, 28 };  // Position et taille de la hache (ajustez selon vos besoins)
-        SDL_RenderCopyEx(renderer, textureHache, NULL, &rectHache, 0, NULL, flip);
+        if (tapeEnCours == 1) {
+        	if (rectPersonnage.x == 175) {
+        		rectPersonnage.x += 25;
+        	}else{
+        		rectPersonnage.x -= 25;
+        	}
+        	SDL_RenderCopyEx(renderer, textureBuche, NULL, &rectBuche, 0, NULL, SDL_FLIP_NONE);
+	        SDL_RenderCopyEx(renderer, textureHacheTape, NULL, &rectPersonnage, 0, NULL, flip);
+	    	if (rectPersonnage.x == 200) {
+        		rectPersonnage.x -= 25;
+        	}else{
+        		rectPersonnage.x += 25;
+        	}
+	    } else {
+	        SDL_RenderCopyEx(renderer, texturePersonnage, NULL, &rectPersonnage, 0, NULL, flip);
+	    }
 
         // Afficher le score
         TTF_Font* scoreFont = TTF_OpenFont("src/fonts/KOMIKAP_.ttf", 40);
@@ -556,10 +573,13 @@ int main(int argc, char *argv[]) {
 
         // Rafraîchir l'écran
         SDL_RenderPresent(renderer);
+        SDL_Delay(100);
+        tapeEnCours = 0;
     }
 
-    // Libération des ressources
-    SDL_DestroyTexture(textureHache);
+    // Libération des ressourcesv
+    SDL_DestroyTexture(textureBuche);
+    SDL_DestroyTexture(textureHacheTape);
     SDL_DestroyTexture(texturePersonnage);
     SDL_DestroyTexture(textureArbre);
     SDL_DestroyTexture(textureBranche);
