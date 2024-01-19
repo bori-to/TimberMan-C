@@ -2,7 +2,7 @@
     GNU/Linux et MacOS
         > gcc src/*.c -o bin/prog $(sdl2-config --cflags --libs)
     Windows
-        > gcc src/*.c -o bin/prog -I include -L lib -lmingw32 -lSDL2main -lSDL2
+        > gcc src/main.c -o bin/prog -I include -L lib -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
 */
 
 #include <stdio.h>
@@ -109,23 +109,47 @@ bool isThemeSupported(const char* theme) {
     
 }
 
+// Définition des skins supportés
+const char* supportedSkins[] = {"default", "timberman", "cow"};
+const int supportedSkinsCount = sizeof(supportedSkins) / sizeof(supportedSkins[0]);
+
+
+// Vérifie si un thème est supporté
+bool isSkinSupported(const char* skin) {
+
+    for (int i = 0; i < supportedSkinsCount; i++) {
+
+        if (strcmp(skin, supportedSkins[i]) == 0) {
+
+            return true;
+
+        }
+
+    }
+
+    return false;
+    
+}
+
 
 // Lit le fichier de configuration et récupère les valeurs
-void readConfigFile(char* theme, double* difficulty, double* speed) {
+void readConfigFile(char* theme, char* skin, double* difficulty, double* speed) {
 
     // Définition constantes
 
     const char defaultTheme[] = "default";
+    const char defaultSkin[] = "default";
     const double defaultDifficulty = 1.0, minDifficulty = 0.10, maxDifficulty = 10.0;
     const double defaultSpeed = 1.0, minSpeed = 0.10, maxSpeed = 10.0;
     const int maxKeyLength = 20, maxValueLength = 40;
 
     // Initialisation avec des valeurs par défaut
     strncpy(theme, defaultTheme, sizeof(defaultTheme));
+    strncpy(skin, defaultSkin, sizeof(defaultSkin));
     *difficulty = defaultDifficulty;
     *speed = defaultSpeed;
 
-    FILE* f = fopen("config/timberman.config", "r"); // Ouverture en lecture seule du fichier de config
+    FILE* f = fopen("../config/timberman.config", "r"); // Ouverture en lecture seule du fichier de config
 
     if (f == NULL) {
 
@@ -155,6 +179,25 @@ void readConfigFile(char* theme, double* difficulty, double* speed) {
                     printf("Theme non pris en charge : %s\n\n Le theme par defaut a ete applique !\n\n", value);
 
                     strncpy(theme, defaultTheme, maxValueLength);
+                    theme[maxValueLength] = '\0';
+
+                }
+
+            }
+
+            // Vérification et traitement pour le skin
+            if (strncmp(key, "skin", 20) == 0) {
+
+                if (isSkinSupported(value)) {
+
+                    strncpy(skin, value, maxValueLength);
+                    theme[maxValueLength] = '\0';
+
+                } else {
+
+                    printf("Skin non pris en charge : %s\n\n Le theme par defaut a ete applique !\n\n", value);
+
+                    strncpy(skin, defaultSkin, maxValueLength);
                     theme[maxValueLength] = '\0';
 
                 }
@@ -219,6 +262,7 @@ void verifyConfigFileExistence(const char* fichierConfig) {
         // Ecriture des valeurs par défaut dans le fichier de config
 
         fprintf(f, "theme = default\n");
+        fprintf(f, "skin = default\n");
         fprintf(f, "difficulty = 1.00\n");
         fprintf(f, "speed = 1.00\n");
 
@@ -423,18 +467,19 @@ int main(int argc, char *argv[]) {
 
     // Déclaration des variables de configuration
 
-    char theme[100];
+    char theme[100], skin[100];
     double difficulty, speed;
 
     // Vérification de l'existence du fichier de configuration et création si nécessaire
-    verifyConfigFileExistence("config/timberman.config");
+    verifyConfigFileExistence("../config/timberman.config");
 
     // Lecture du fichier de configuration et récupération des valeurs
-    readConfigFile(theme, &difficulty, &speed);
+    readConfigFile(theme, skin, &difficulty, &speed);
 
     // Pour debug - Affichage des valeurs de configuration
     printf("\n\nParametres de configuration :\n\n");
     printf("Theme : %s\n", theme);
+    printf("Skin : %s\n", skin);
     printf("Coefficient de difficulte : %.2f\n", difficulty);
     printf("Coefficient d'acceleration de la vitesse : %.2f\n", speed);
   
