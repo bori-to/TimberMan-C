@@ -232,8 +232,6 @@ void verifyConfigFileExistence(const char* fichierConfig) {
 
 }
 
-
-
 // Fonction pour comparer les entiers par ordre décroissant pour qsort
 int comparerIntDesc(const void* a, const void* b) {
     return (*(int*)b - *(int*)a);
@@ -340,6 +338,85 @@ int afficherPopup(SDL_Renderer* renderer, int score) {
         SDL_DestroyTexture(texturePlayAgain);
         SDL_RenderPresent(renderer);
     }
+}
+
+int afficherPopupHighScore(SDL_Renderer* renderer) {
+     // Ouvrir le fichier en mode lecture
+    FILE *fichier = fopen("highscore/highscore.txt", "r");
+
+    // Vérifier si l'ouverture du fichier a réussi
+    if (fichier == NULL) {
+        fprintf(stderr, "Erreur lors de l'ouverture du fichier.\n");
+        return 1;
+    }
+
+    // Lire le fichier ligne par ligne
+    char ligne[100];  // Assurez-vous que cette taille est suffisamment grande
+    // Charger la texture pour la popup de Game Over
+    int quit = 0;
+    while(quit == 0){
+        int xScore = 0;
+        TTF_Font* scoreFont = TTF_OpenFont("src/fonts/KOMIKAP_.ttf", 40);
+        SDL_Color couleurTexte = { 255, 255, 255 }; // Blanc
+        char scoreTexte[50];
+
+        // Position initiale pour afficher le premier score
+        int yPosition = 90;
+
+        SDL_Texture* textureHigh = chargerTexture(renderer, "src/images/highscorebackground.png");
+        SDL_Rect rectHigh = {264.5, 62, 271, 576};
+        // Dessiner la popup
+        SDL_RenderCopy(renderer, textureHigh, NULL, &rectHigh);
+        
+        SDL_Texture *textureMainMenu = chargerTexture(renderer, "src/images/menu.png");
+        SDL_Rect rectMainMenu = {306.25, 525, 187.5, 62.5};
+
+        SDL_RenderCopy(renderer, textureMainMenu, NULL, &rectMainMenu);
+
+        char ligne[100];
+        rewind(fichier);
+        while(fgets(ligne, sizeof(ligne), fichier) != NULL) {
+            // Afficher le score
+            snprintf(scoreTexte, sizeof(scoreTexte), "%s", ligne);
+            SDL_Surface* surfaceScore = TTF_RenderText_Solid(scoreFont, scoreTexte, couleurTexte);
+            SDL_Texture* textureScore = SDL_CreateTextureFromSurface(renderer, surfaceScore);
+
+            // Ajuster la position Y pour le prochain score
+            SDL_Rect rectScore = {350, yPosition, 100, 35};
+            SDL_RenderCopy(renderer, textureScore, NULL, &rectScore);
+
+            // Libérer les ressources du score actuel
+            SDL_FreeSurface(surfaceScore);
+            SDL_DestroyTexture(textureScore);
+
+            // Incrémenter la position Y
+            yPosition += 40;  // Ajustez selon vos besoins
+        }
+
+        // boutton cliquable
+        SDL_PumpEvents();
+        int x, y;
+        Uint32 buttons = SDL_GetMouseState(&x, &y);
+
+        if (buttons & SDL_BUTTON(SDL_BUTTON_LEFT) &&
+            x >= rectMainMenu.x && x < rectMainMenu.x + rectMainMenu.w &&
+            y >= rectMainMenu.y && y < rectMainMenu.y + rectMainMenu.h) {
+            printf("Bouton MainMenu cliqué!\n");
+            quit = afficherMenu(renderer);
+            return quit;
+        }
+        SDL_RenderPresent(renderer);
+
+
+        // Libérer les ressources de la popup
+        SDL_DestroyTexture(textureHigh);
+        TTF_CloseFont(scoreFont);
+        SDL_DestroyTexture(textureHigh);
+        SDL_DestroyTexture(textureMainMenu);
+        SDL_RenderPresent(renderer);
+    }
+    // Fermer le fichier
+    fclose(fichier);
 }
 
 int main(int argc, char *argv[]) {
@@ -713,6 +790,13 @@ int afficherMenu(SDL_Renderer *renderer) {
         SDL_PumpEvents();
         int x, y;
         Uint32 buttons = SDL_GetMouseState(&x, &y);
+
+        // Vérifier si le clic gauche de la souris se produit sur le bouton "highScore"
+        if (buttons & SDL_BUTTON(SDL_BUTTON_LEFT) && x >= rectBoutonHighScore.x && x < rectBoutonHighScore.x + rectBoutonHighScore.w &&
+            y >= rectBoutonHighScore.y && y < rectBoutonHighScore.y + rectBoutonHighScore.h) {
+            printf("Bouton HighScore clique!\n");
+            return afficherPopupHighScore(renderer);
+        }
 
         // Vérifier si le clic gauche de la souris se produit sur le bouton "Start"
         if (buttons & SDL_BUTTON(SDL_BUTTON_LEFT) && x >= rectBoutonStart.x && x < rectBoutonStart.x + rectBoutonStart.w &&
