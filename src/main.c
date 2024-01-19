@@ -779,14 +779,22 @@ int afficherMenu(SDL_Renderer *renderer) {
         // Charger les textures des boutons
         SDL_Texture *textureBoutonStart = chargerTexture(renderer, "src/images/start.png");
         SDL_Texture *textureBoutonHighScore = chargerTexture(renderer, "src/images/highscore.png");
+	SDL_Texture *textureIconeSettings = chargerTexture(renderer, "src/images/settings_icone.png");
         SDL_Texture *textureBoutonExit = chargerTexture(renderer, "src/images/exit.png");
 
         int largeurBouton = 202.5;
         int hauteurBouton = 72;
 
+	int largeurIcone = 108;
+        int hauteurIcone = 108;
+
         // Exemple : Dessiner le bouton "High Score"
         SDL_Rect rectBoutonHighScore = {300, 200, largeurBouton, hauteurBouton};  // Ajustez la position et la taille
         SDL_RenderCopy(renderer, textureBoutonHighScore, NULL, &rectBoutonHighScore);
+
+	// Exemple : Dessiner le bouton "Settings"
+        SDL_Rect rectIconeSettings = {700, 0, largeurIcone, hauteurIcone};  // Ajustez la position et la taille
+        SDL_RenderCopy(renderer, textureIconeSettings, NULL, &rectIconeSettings);
 
         // Exemple : Dessiner le bouton "Start"
         SDL_Rect rectBoutonStart = {265, 300, 270, 96};  // Ajustez la position et la taille
@@ -814,11 +822,24 @@ int afficherMenu(SDL_Renderer *renderer) {
             return 2;
         }
 
+	// if (buttons & SDL_BUTTON(SDL_BUTTON_LEFT) && x >= rectBoutonHighScore.x && x < rectBoutonHighScore.x + rectBoutonHighScore.w &&
+        //     y >= rectBoutonHighScore.y && y < rectBoutonHighScore.y + rectBoutonHighScore.h) {
+        //     printf("Bouton exit clique!\n");
+        //     return 3;
+        // }
+
+        // if (buttons & SDL_BUTTON(SDL_BUTTON_LEFT) && x >= rectIconeSettings.x && x < rectIconeSettings.x + rectIconeSettings.w &&
+        //     y >= rectIconeSettings.y && y < rectIconeSettings.y + rectIconeSettings.h) {
+        //     printf("Bouton exit clique!\n");
+        //     return 4;
+        // }
+
         SDL_RenderPresent(renderer);
 
         // Libérer les textures des boutons
         SDL_DestroyTexture(textureBoutonStart);
         SDL_DestroyTexture(textureBoutonHighScore);
+	SDL_DestroyTexture(textureIconeSettings);
         SDL_DestroyTexture(textureBoutonExit);
         SDL_DestroyTexture(textureMenu);
     }
