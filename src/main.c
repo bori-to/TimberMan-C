@@ -149,7 +149,7 @@ void readConfigFile(char* theme, char* skin, double* difficulty, double* speed) 
     *difficulty = defaultDifficulty;
     *speed = defaultSpeed;
 
-    FILE* f = fopen("../config/timberman.config", "r"); // Ouverture en lecture seule du fichier de config
+    FILE* f = fopen("config/timberman.config", "r"); // Ouverture en lecture seule du fichier de config
 
     if (f == NULL) {
 
@@ -243,13 +243,13 @@ void readConfigFile(char* theme, char* skin, double* difficulty, double* speed) 
 
 
 // Vérifie l'existence du fichier de configuration et le crée s'il n'existe pas
-void verifyConfigFileExistence(const char* fichierConfig) {
+void verifyConfigFileExistence() {
 
-    FILE* f = fopen(fichierConfig, "r"); // Ouverture en lecture seule du fichier de config
+    FILE* f = fopen("config/timberman.config", "r"); // Ouverture en lecture seule du fichier de config
 
     if (f == NULL) {
 
-        f = fopen(fichierConfig, "w"); // Création du fichier de config s'il n'existe pas
+        f = fopen("config/timberman.config", "w"); // Création du fichier de config s'il n'existe pas
 
         if (f == NULL) {
 
@@ -471,7 +471,7 @@ int main(int argc, char *argv[]) {
     double difficulty, speed;
 
     // Vérification de l'existence du fichier de configuration et création si nécessaire
-    verifyConfigFileExistence("../config/timberman.config");
+    verifyConfigFileExistence();
 
     // Lecture du fichier de configuration et récupération des valeurs
     readConfigFile(theme, skin, &difficulty, &speed);
@@ -542,16 +542,28 @@ int main(int argc, char *argv[]) {
     Mix_Chunk* SonCouperBois = Mix_LoadWAV("src/sound/treeChopSound.wav");
     Mix_VolumeChunk(SonCouperBois, MIX_MAX_VOLUME / 5);
 
-    // Charger les texturess
-    SDL_Texture *textureFond = chargerTexture(renderer, "src/images/background.png");
-    SDL_Texture *texturePersonnage = chargerTexture(renderer, "src/images/playerTest3.png");
-    SDL_Texture *textureArbre = chargerTexture(renderer, "src/images/tree.png");
-    SDL_Texture* textureBranche = chargerTexture(renderer, "src/images/branch.png");
 
-    SDL_Texture* textureHacheTape = chargerTexture(renderer, "src/images/playerTest4.png");
+    // Charger les textures
+	char cheminImage[100];
+	snprintf(cheminImage, sizeof(cheminImage), "src/images/theme/%s.png", theme);
+    SDL_Texture *textureFond = chargerTexture(renderer, cheminImage);
 
-    SDL_Texture *textureBuche = chargerTexture(renderer, "src/images/particule.png");
+    snprintf(cheminImage, sizeof(cheminImage), "src/images/skin/%s/player1.png", skin);
+    SDL_Texture *texturePersonnage = chargerTexture(renderer, cheminImage);
 
+    snprintf(cheminImage, sizeof(cheminImage), "src/images/skin/%s/tree.png", skin);
+    SDL_Texture *textureArbre = chargerTexture(renderer, cheminImage);
+
+    snprintf(cheminImage, sizeof(cheminImage), "src/images/skin/%s/branch.png", skin);
+    SDL_Texture* textureBranche = chargerTexture(renderer, cheminImage);
+
+    snprintf(cheminImage, sizeof(cheminImage), "src/images/skin/%s/player2.png", skin);
+    SDL_Texture* textureHacheTape = chargerTexture(renderer, cheminImage);
+
+    snprintf(cheminImage, sizeof(cheminImage), "src/images/skin/%s/particule.png", skin);
+    SDL_Texture *textureBuche = chargerTexture(renderer, cheminImage);
+
+    // Charger elements textures
     SDL_Texture* textureTimerBorder = chargerTexture(renderer, "src/images/TimerBorder.png");
     SDL_Rect rectTimerBorder = { 350, 10, 100, 34 };
 
