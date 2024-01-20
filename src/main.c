@@ -463,6 +463,55 @@ int afficherPopupHighScore(SDL_Renderer* renderer) {
     fclose(fichier);
 }
 
+int afficherSetting(SDL_Renderer* renderer) {
+    int quit = 0;
+    while(quit == 0){        
+
+        SDL_Texture* textureHigh = chargerTexture(renderer, "src/images/highscorebackground.png");
+        SDL_Rect rectHigh = {264.5, 62, 271, 576};
+        // Dessiner la popup
+        SDL_RenderCopy(renderer, textureHigh, NULL, &rectHigh);
+        
+        SDL_Texture *textureMainMenu = chargerTexture(renderer, "src/images/menu.png");
+        SDL_Rect rectMainMenu = {306.25, 525, 187.5, 62.5};
+
+        SDL_RenderCopy(renderer, textureMainMenu, NULL, &rectMainMenu);
+
+        // Afficher le score
+        TTF_Font* SettingFont = TTF_OpenFont("src/fonts/KOMIKAP_.ttf", 40);
+        SDL_Color couleurTexte = { 255, 255, 255 }; // Blanc
+        char settingsTexte[50];
+        snprintf(settingsTexte, sizeof(settingsTexte), "Settings:");
+        SDL_Surface* surfaceSettings = TTF_RenderText_Solid(SettingFont, settingsTexte, couleurTexte);
+        SDL_Texture* textureSettings = SDL_CreateTextureFromSurface(renderer, surfaceSettings);
+        SDL_Rect rectSettings = { 300, 100, surfaceSettings->w, surfaceSettings->h };
+        SDL_RenderCopy(renderer, textureSettings, NULL, &rectSettings);
+
+        // boutton cliquable
+        SDL_PumpEvents();
+        int x, y;
+        Uint32 buttons = SDL_GetMouseState(&x, &y);
+
+        if (buttons & SDL_BUTTON(SDL_BUTTON_LEFT) &&
+            x >= rectMainMenu.x && x < rectMainMenu.x + rectMainMenu.w &&
+            y >= rectMainMenu.y && y < rectMainMenu.y + rectMainMenu.h) {
+            printf("Bouton MainMenu cliqué!\n");
+            quit = afficherMenu(renderer);
+            return quit;
+        }
+        SDL_RenderPresent(renderer);
+
+
+        // Libérer les ressources de la popup
+        SDL_FreeSurface(surfaceSettings);
+        SDL_DestroyTexture(textureSettings);
+        TTF_CloseFont(SettingFont);
+        SDL_DestroyTexture(textureHigh);
+        SDL_DestroyTexture(textureMainMenu);
+        SDL_RenderPresent(renderer);
+    }
+}
+
 int main(int argc, char *argv[]) {
 
     // Déclaration des variables de configuration
@@ -827,6 +876,7 @@ int afficherMenu(SDL_Renderer *renderer) {
         SDL_Texture *textureBoutonStart = chargerTexture(renderer, "src/images/start.png");
         SDL_Texture *textureBoutonHighScore = chargerTexture(renderer, "src/images/highscore.png");
         SDL_Texture *textureBoutonExit = chargerTexture(renderer, "src/images/exit.png");
+        SDL_Texture *settings_icone = chargerTexture(renderer, "src/images/settings_icone.png");
 
         int largeurBouton = 202.5;
         int hauteurBouton = 72;
@@ -843,6 +893,9 @@ int afficherMenu(SDL_Renderer *renderer) {
         SDL_Rect rectBoutonExit = {300, 424, largeurBouton, hauteurBouton};  // Ajustez la position et la taille
         SDL_RenderCopy(renderer, textureBoutonExit, NULL, &rectBoutonExit);
 
+        SDL_Rect rectsettings_icone = {662, 10, 128, 128};  // Ajustez la position et la taille
+        SDL_RenderCopy(renderer, settings_icone, NULL, &rectsettings_icone);
+
         // Détecter les clics de souris
         SDL_PumpEvents();
         int x, y;
@@ -853,6 +906,12 @@ int afficherMenu(SDL_Renderer *renderer) {
             y >= rectBoutonHighScore.y && y < rectBoutonHighScore.y + rectBoutonHighScore.h) {
             printf("Bouton HighScore clique!\n");
             return afficherPopupHighScore(renderer);
+        }
+
+        if (buttons & SDL_BUTTON(SDL_BUTTON_LEFT) && x >= rectsettings_icone.x && x < rectsettings_icone.x + rectsettings_icone.w &&
+            y >= rectsettings_icone.y && y < rectsettings_icone.y + rectsettings_icone.h) {
+            printf("Bouton Setting clique!\n");
+            return afficherSetting(renderer);
         }
 
         // Vérifier si le clic gauche de la souris se produit sur le bouton "Start"
@@ -874,6 +933,7 @@ int afficherMenu(SDL_Renderer *renderer) {
         SDL_DestroyTexture(textureBoutonStart);
         SDL_DestroyTexture(textureBoutonHighScore);
         SDL_DestroyTexture(textureBoutonExit);
+        SDL_DestroyTexture(settings_icone);
         SDL_DestroyTexture(textureMenu);
     }
 }
