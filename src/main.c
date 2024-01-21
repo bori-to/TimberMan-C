@@ -16,6 +16,7 @@
 #include <SDL_ttf.h>
 #include <SDL_mouse.h>
 #include <SDL_mixer.h>
+#include <dirent.h>
 #define MAX_SCORES 10
 
 int afficherMenu(SDL_Renderer *renderer);
@@ -499,15 +500,73 @@ int afficherSetting(SDL_Renderer* renderer) {
             quit = afficherMenu(renderer);
             return quit;
         }
-        SDL_RenderPresent(renderer);
 
+
+        char theme[100], skin[100];
+	    double difficulty, speed;
+
+	    // Vérification de l'existence du fichier de configuration et création si nécessaire
+	    verifyConfigFileExistence();
+
+	    // Lecture du fichier de configuration et récupération des valeurs
+	    readConfigFile(theme, skin, &difficulty, &speed);
+
+	    DIR *dir;
+	    struct dirent *ent;
+	    char *diff = NULL;
+	    if ((dir = opendir("src/images/theme")) != NULL) {
+	        /* Trouver le deuxième fichier dans le répertoire */
+	        while ((ent = readdir(dir)) != NULL) {
+	            char *dot = strrchr(ent->d_name, '.');
+	            if (dot && !strcmp(dot, ".png")) {
+	            	*dot = '\0'; // Supprime l'extension ".png"
+	                if (diff == theme) {
+	                	printf("%s\n", theme);
+	                    printf("%s\n", ent->d_name);
+	                    break; // Sortir de la boucle après le deuxième fichier
+	                }
+	            }
+	        }
+	        closedir(dir);
+	    }
+
+        //Partie selection du theme
+        SDL_Texture *textureRight = chargerTexture(renderer, "src/images/right.png");
+        SDL_Rect rectRight = {480, 170, 31.5, 29};
+        SDL_RenderCopy(renderer, textureRight, NULL, &rectRight);
+        if (buttons & SDL_BUTTON(SDL_BUTTON_LEFT) &&
+            x >= rectRight.x && x < rectRight.x + rectRight.w &&
+            y >= rectRight.y && y < rectRight.y + rectRight.h) {
+            printf("Bouton Right cliqué!\n");
+        }
+
+        SDL_Texture *textureLeft = chargerTexture(renderer, "src/images/left.png");
+        SDL_Rect rectLeft = {290, 170, 31.5, 29};
+        SDL_RenderCopy(renderer, textureLeft, NULL, &rectLeft);
+
+        SettingFont = TTF_OpenFont("src/fonts/KOMIKAP_.ttf", 30);
+        char ThemeTexte[50];	
+        snprintf(ThemeTexte, sizeof(ThemeTexte), theme);
+        SDL_Surface* surfaceTheme = TTF_RenderText_Solid(SettingFont, ThemeTexte, couleurTexte);
+        SDL_Texture* textureTheme = SDL_CreateTextureFromSurface(renderer, surfaceTheme);
+        SDL_Rect rectTheme = { 331.5, 160, surfaceTheme->w, surfaceTheme->h };
+        SDL_RenderCopy(renderer, textureTheme, NULL, &rectTheme);
+
+        
+        SDL_RenderPresent(renderer);
 
         // Libérer les ressources de la popup
         SDL_FreeSurface(surfaceSettings);
         SDL_DestroyTexture(textureSettings);
+
+        SDL_FreeSurface(surfaceTheme);
+        SDL_DestroyTexture(textureTheme);
+
         TTF_CloseFont(SettingFont);
         SDL_DestroyTexture(textureHigh);
         SDL_DestroyTexture(textureMainMenu);
+        SDL_DestroyTexture(textureRight);
+        SDL_DestroyTexture(textureLeft);
         SDL_RenderPresent(renderer);
     }
 }
@@ -742,6 +801,7 @@ int main(int argc, char *argv[]) {
                         tempsRestant = 3000; // Réinitialisez le temps
                         timing = 0;
                         tempsBloque = 1;
+                        score = score - 1;
                         Jouer = afficherPopup(renderer, score);
 
                         verifyHighScoreFileExistence(score);
