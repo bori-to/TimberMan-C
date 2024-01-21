@@ -48,37 +48,104 @@ SDL_Texture* chargerTexture(SDL_Renderer *renderer, const char *cheminImage) {
     return texture;
 }
 
-void ajouterBrancheAleatoire(Branche branches[], SDL_Texture* textureBranche) {
-    int nbRand = rand() % 3 + 1;
-    switch(nbRand) {
-        case 1:
-            // Ne pas ajouter de branche
-            break;
-        case 2:
-            // Ajouter une nouvelle branche à gauche
-            branches[0] = branches[1];
-            branches[1] = branches[2];
-            branches[2] = branches[3];
-            branches[3] = branches[4];
-            branches[4].texture = textureBranche;
-            branches[4].rect.x = 175;  // Position initiale sur le tronc
-            branches[4].rect.y = -120;  // Position en haut du tronc
-            branches[4].rect.w = 150;  // Ajustez la largeur en fonction de vos besoins
-            branches[4].rect.h = 28;  // Ajustez la hauteur en fonction de vos besoins
-            break;
-        case 3:
-            // Ajouter une nouvelle branche à droite
-            branches[0] = branches[1];
-            branches[1] = branches[2];
-            branches[2] = branches[3];
-            branches[3] = branches[4];
-            branches[4].texture = textureBranche;
-            branches[4].rect.x = 475;  // Position initiale sur le tronc
-            branches[4].rect.y = -120;  // Position en haut du tronc
-            branches[4].rect.w = 150;  // Ajustez la largeur en fonction de vos besoins
-            branches[4].rect.h = 28;  // Ajustez la hauteur en fonction de vos besoins
-            break;
-    }
+void ajouterBrancheAleatoire(Branche branches[], SDL_Texture* textureBranche, int difficulty) {
+    int nbRand = 0;
+    if(difficulty == 1){
+		// 33% 33% 33%
+		int nbRand = rand() % 3 + 1;
+        switch(nbRand) {
+            case 1:
+                break;
+            case 2:
+	            // Ajouter une nouvelle branche à gauche
+	            branches[0] = branches[1];
+	            branches[1] = branches[2];
+	            branches[2] = branches[3];
+	            branches[3] = branches[4];
+	            branches[4].texture = textureBranche;
+	            branches[4].rect.x = 175;  // Position initiale sur le tronc
+	            branches[4].rect.y = -120;  // Position en haut du tronc
+	            branches[4].rect.w = 150;  // Ajustez la largeur en fonction de vos besoins
+	            branches[4].rect.h = 28;  // Ajustez la hauteur en fonction de vos besoins
+            	break;
+        	case 3:
+	            // Ajouter une nouvelle branche à droite
+	            branches[0] = branches[1];
+	            branches[1] = branches[2];
+	            branches[2] = branches[3];
+	            branches[3] = branches[4];
+	            branches[4].texture = textureBranche;
+	            branches[4].rect.x = 475;  // Position initiale sur le tronc
+	            branches[4].rect.y = -120;  // Position en haut du tronc
+	            branches[4].rect.w = 150;  // Ajustez la largeur en fonction de vos besoins
+	            branches[4].rect.h = 28;  // Ajustez la hauteur en fonction de vos besoins
+	            break;
+        }
+	}
+	if(difficulty == 2){
+		// 20% 40% 40%
+		int nbRand = rand() % 100;
+		if(nbRand <= 20){
+			//Rien
+		}else{
+			int nbRand = rand() % 2 + 1;
+			switch(nbRand) {
+            	case 1:
+		            // Ajouter une nouvelle branche à gauche
+		            branches[0] = branches[1];
+		            branches[1] = branches[2];
+		            branches[2] = branches[3];
+		            branches[3] = branches[4];
+		            branches[4].texture = textureBranche;
+		            branches[4].rect.x = 175;  // Position initiale sur le tronc
+		            branches[4].rect.y = -120;  // Position en haut du tronc
+		            branches[4].rect.w = 150;  // Ajustez la largeur en fonction de vos besoins
+		            branches[4].rect.h = 28;  // Ajustez la hauteur en fonction de vos besoins
+            	break;
+        		case 2:
+		            // Ajouter une nouvelle branche à droite
+		            branches[0] = branches[1];
+		            branches[1] = branches[2];
+		            branches[2] = branches[3];
+		            branches[3] = branches[4];
+		            branches[4].texture = textureBranche;
+		            branches[4].rect.x = 475;  // Position initiale sur le tronc
+		            branches[4].rect.y = -120;  // Position en haut du tronc
+		            branches[4].rect.w = 150;  // Ajustez la largeur en fonction de vos besoins
+		            branches[4].rect.h = 28;  // Ajustez la hauteur en fonction de vos besoins
+		            break;
+        	}
+		}
+	}
+	if(difficulty == 3){
+		int nbRand = rand() % 2 + 1;
+		switch(nbRand) {
+        	case 1:
+	            // Ajouter une nouvelle branche à gauche
+	            branches[0] = branches[1];
+	            branches[1] = branches[2];
+	            branches[2] = branches[3];
+	            branches[3] = branches[4];
+	            branches[4].texture = textureBranche;
+	            branches[4].rect.x = 175;  // Position initiale sur le tronc
+	            branches[4].rect.y = -120;  // Position en haut du tronc
+	            branches[4].rect.w = 150;  // Ajustez la largeur en fonction de vos besoins
+	            branches[4].rect.h = 28;  // Ajustez la hauteur en fonction de vos besoins
+        		break;
+    		case 2:
+	            // Ajouter une nouvelle branche à droite
+	            branches[0] = branches[1];
+	            branches[1] = branches[2];
+	            branches[2] = branches[3];
+	            branches[3] = branches[4];
+	            branches[4].texture = textureBranche;
+	            branches[4].rect.x = 475;  // Position initiale sur le tronc
+	            branches[4].rect.y = -120;  // Position en haut du tronc
+	            branches[4].rect.w = 150;  // Ajustez la largeur en fonction de vos besoins
+	            branches[4].rect.h = 28;  // Ajustez la hauteur en fonction de vos besoins
+	            break;
+    	}
+	}
 }
 
 int detecterCollision(SDL_Rect rectJoueur, SDL_Rect rectBranche) {
@@ -134,13 +201,13 @@ bool isSkinSupported(const char* skin) {
 
 
 // Lit le fichier de configuration et récupère les valeurs
-void readConfigFile(char* theme, char* skin, double* difficulty, double* speed) {
+void readConfigFile(char* theme, char* skin, int* difficulty, double* speed) {
 
     // Définition constantes
 
     const char defaultTheme[] = "default";
     const char defaultSkin[] = "default";
-    const double defaultDifficulty = 1.0, minDifficulty = 0.10, maxDifficulty = 10.0;
+    const double defaultDifficulty = 1, minDifficulty = 1, maxDifficulty = 3;
     const double defaultSpeed = 1.0, minSpeed = 0.10, maxSpeed = 10.0;
     const int maxKeyLength = 20, maxValueLength = 40;
 
@@ -212,7 +279,7 @@ void readConfigFile(char* theme, char* skin, double* difficulty, double* speed) 
 
                 if (*difficulty < minDifficulty || *difficulty > maxDifficulty) {
 
-                    printf("Erreur: La difficulte doit être comprise entre %.2f et %.2f ! Passage à la valeur par defaut (%.2f)\n\n", minDifficulty, maxDifficulty, defaultDifficulty);
+                    printf("Erreur: La difficulte doit être comprise entre %d et %d ! Passage à la valeur par defaut (%d)\n\n", minDifficulty, maxDifficulty, defaultDifficulty);
 
                     *difficulty = defaultDifficulty;
 
@@ -264,7 +331,7 @@ void verifyConfigFileExistence() {
 
         fprintf(f, "theme = default\n");
         fprintf(f, "skin = default\n");
-        fprintf(f, "difficulty = 1.00\n");
+        fprintf(f, "difficulty = 1\n");
         fprintf(f, "speed = 1.00\n");
 
         fclose(f); // Fermeture du fichier de config
@@ -503,7 +570,8 @@ int afficherSetting(SDL_Renderer* renderer) {
 
 
         char theme[100], skin[100];
-	    double difficulty, speed;
+        int difficulty;
+	    double speed;
 
 	    // Vérification de l'existence du fichier de configuration et création si nécessaire
 	    verifyConfigFileExistence();
@@ -537,7 +605,7 @@ int afficherSetting(SDL_Renderer* renderer) {
         if (buttons & SDL_BUTTON(SDL_BUTTON_LEFT) &&
             x >= rectRight.x && x < rectRight.x + rectRight.w &&
             y >= rectRight.y && y < rectRight.y + rectRight.h) {
-            printf("Bouton Right cliqué!\n");
+            printf("Bouton Right cliqué! avec le them %s\n", theme);
         }
 
         SDL_Texture *textureLeft = chargerTexture(renderer, "src/images/left.png");
@@ -576,7 +644,8 @@ int main(int argc, char *argv[]) {
     // Déclaration des variables de configuration
 
     char theme[100], skin[100];
-    double difficulty, speed;
+    int difficulty;
+    double speed;
 
     // Vérification de l'existence du fichier de configuration et création si nécessaire
     verifyConfigFileExistence();
@@ -588,7 +657,7 @@ int main(int argc, char *argv[]) {
     printf("\n\nParametres de configuration :\n\n");
     printf("Theme : %s\n", theme);
     printf("Skin : %s\n", skin);
-    printf("Coefficient de difficulte : %.2f\n", difficulty);
+    printf("Coefficient de difficulte : %d\n", difficulty);
     printf("Coefficient d'acceleration de la vitesse : %.2f\n", speed);
   
     
@@ -762,10 +831,18 @@ int main(int argc, char *argv[]) {
                         	tempsBloque = 0;
                         }
                         if(tempsRestant <= 6000){
-                        	timing += 500;
+                        	if(speed == 1){
+                        		timing += 500;
+                        	}
+                        	if(speed == 2){
+                        		timing += 250;
+                        	}
+                        	if(speed == 3){
+                        		timing += 175;
+                        	}
                         }
                         // Ajouter une nouvelle branche en haut du tronc
-                        ajouterBrancheAleatoire(branches, textureBranche);
+                        ajouterBrancheAleatoire(branches, textureBranche, difficulty);
                         score++;
                         Mix_PlayChannel(-1, SonCouperBois, 0);
                         break;
@@ -778,16 +855,23 @@ int main(int argc, char *argv[]) {
                         	tempsBloque = 0;
                         }
                         if(tempsRestant <= 6000){
-                        	timing += 500;
+                        	if(speed == 1){
+                        		timing += 500;
+                        	}
+                        	if(speed == 2){
+                        		timing += 250;
+                        	}
+                        	if(speed == 3){
+                        		timing += 175;
+                        	}
                         }
                         // Ajouter une nouvelle branche en haut du tronc
-                        ajouterBrancheAleatoire(branches, textureBranche);
+                        ajouterBrancheAleatoire(branches, textureBranche, difficulty);
                         score++;
                         Mix_PlayChannel(-1, SonCouperBois, 0);
                         break;
                     // Ajoutez d'autres cas pour d'autres touches si nécessaire
                 }
-                printf("%d\n",score);
                 for (int i = 0; i < 5; ++i) {
                     if(branches[i].rect.y < 480){
                         branches[i].rect.y += 120;
