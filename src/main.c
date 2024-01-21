@@ -532,9 +532,16 @@ int afficherPopupHighScore(SDL_Renderer* renderer) {
 }
 
 int afficherSetting(SDL_Renderer* renderer) {
+	char theme[100], skin[100];
+    int difficulty;
+    double speed;
+
+    // Lecture du fichier de configuration et récupération des valeurs
+    readConfigFile(theme, skin, &difficulty, &speed);
+
     int quit = 0;
-    int difficultyName = 1;
-    int speedName = 1;
+    int difficultyName = difficulty;
+    int speedName = speed;
     while(quit == 0){        
         SDL_Texture* textureHigh = chargerTexture(renderer, "src/images/highscorebackground.png");
         SDL_Rect rectHigh = {264.5, 62, 271, 576};
