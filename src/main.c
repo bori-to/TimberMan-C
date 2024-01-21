@@ -533,8 +533,9 @@ int afficherPopupHighScore(SDL_Renderer* renderer) {
 
 int afficherSetting(SDL_Renderer* renderer) {
     int quit = 0;
+    int difficultyName = 1;
+    int speedName = 1;
     while(quit == 0){        
-
         SDL_Texture* textureHigh = chargerTexture(renderer, "src/images/highscorebackground.png");
         SDL_Rect rectHigh = {264.5, 62, 271, 576};
         // Dessiner la popup
@@ -554,19 +555,6 @@ int afficherSetting(SDL_Renderer* renderer) {
         SDL_Texture* textureSettings = SDL_CreateTextureFromSurface(renderer, surfaceSettings);
         SDL_Rect rectSettings = { 300, 100, surfaceSettings->w, surfaceSettings->h };
         SDL_RenderCopy(renderer, textureSettings, NULL, &rectSettings);
-
-        // boutton cliquable
-        SDL_PumpEvents();
-        int x, y;
-        Uint32 buttons = SDL_GetMouseState(&x, &y);
-
-        if (buttons & SDL_BUTTON(SDL_BUTTON_LEFT) &&
-            x >= rectMainMenu.x && x < rectMainMenu.x + rectMainMenu.w &&
-            y >= rectMainMenu.y && y < rectMainMenu.y + rectMainMenu.h) {
-            printf("Bouton MainMenu cliqué!\n");
-            quit = afficherMenu(renderer);
-            return quit;
-        }
 
 
         char theme[100], skin[100];
@@ -602,12 +590,7 @@ int afficherSetting(SDL_Renderer* renderer) {
         SDL_Texture *textureRight = chargerTexture(renderer, "src/images/right.png");
         SDL_Rect rectRight = {480, 170, 31.5, 29};
         SDL_RenderCopy(renderer, textureRight, NULL, &rectRight);
-        if (buttons & SDL_BUTTON(SDL_BUTTON_LEFT) &&
-            x >= rectRight.x && x < rectRight.x + rectRight.w &&
-            y >= rectRight.y && y < rectRight.y + rectRight.h) {
-            printf("Bouton Right cliqué! avec le them %s\n", theme);
-        }
-
+        
         SDL_Texture *textureLeft = chargerTexture(renderer, "src/images/left.png");
         SDL_Rect rectLeft = {290, 170, 31.5, 29};
         SDL_RenderCopy(renderer, textureLeft, NULL, &rectLeft);
@@ -620,6 +603,102 @@ int afficherSetting(SDL_Renderer* renderer) {
         SDL_Rect rectTheme = { 331.5, 160, surfaceTheme->w, surfaceTheme->h };
         SDL_RenderCopy(renderer, textureTheme, NULL, &rectTheme);
 
+        //difficulty selection
+        SDL_Rect rectRightdifficulty = {480, 200, 31.5, 29};
+        SDL_RenderCopy(renderer, textureRight, NULL, &rectRightdifficulty);
+        
+        SDL_Rect rectLeftdifficulty = {290, 200, 31.5, 29};
+        SDL_RenderCopy(renderer, textureLeft, NULL, &rectLeftdifficulty);
+        
+        char difficultyTexte[50];	
+        snprintf(difficultyTexte, sizeof(difficultyTexte), "%d", difficultyName);
+        SDL_Surface* surfacedifficulty = TTF_RenderText_Solid(SettingFont, difficultyTexte, couleurTexte);
+        SDL_Texture* texturedifficulty = SDL_CreateTextureFromSurface(renderer, surfacedifficulty);
+        SDL_Rect rectdifficulty = { 331.5, 200, surfacedifficulty->w, surfacedifficulty->h };
+        SDL_RenderCopy(renderer, texturedifficulty, NULL, &rectdifficulty);
+
+        //speed selection
+        SDL_Rect rectRightSpeed = {480, 230, 31.5, 29};
+        SDL_RenderCopy(renderer, textureRight, NULL, &rectRightSpeed);
+        
+        SDL_Rect rectLeftSpeed = {290, 230, 31.5, 29};
+        SDL_RenderCopy(renderer, textureLeft, NULL, &rectLeftSpeed);
+        
+        char SpeedTexte[50];	
+        snprintf(SpeedTexte, sizeof(SpeedTexte), "%d", speedName);
+        SDL_Surface* surfaceSpeed = TTF_RenderText_Solid(SettingFont, SpeedTexte, couleurTexte);
+        SDL_Texture* textureSpeed = SDL_CreateTextureFromSurface(renderer, surfaceSpeed);
+        SDL_Rect rectSpeed = { 331.5, 230, surfaceSpeed->w, surfaceSpeed->h };
+        SDL_RenderCopy(renderer, textureSpeed, NULL, &rectSpeed);
+
+
+        SDL_Event event;
+        while (SDL_PollEvent(&event)) {
+            // boutton cliquable
+	        SDL_PumpEvents();
+	        int x, y;
+	        Uint32 buttons = SDL_GetMouseState(&x, &y);
+
+	        if (buttons & SDL_BUTTON(SDL_BUTTON_LEFT) &&
+	            x >= rectMainMenu.x && x < rectMainMenu.x + rectMainMenu.w &&
+	            y >= rectMainMenu.y && y < rectMainMenu.y + rectMainMenu.h) {
+	            printf("Bouton MainMenu cliqué!\n");
+
+	        	//Changer settings
+		        FILE* f = fopen("config/timberman.config", "r"); // Ouverture en lecture seule du fichier de config
+			    f = fopen("config/timberman.config", "w");
+			    fprintf(f, "theme = default\n");
+			    fprintf(f, "skin = default\n");
+			    fprintf(f, "difficulty = %d\n", difficultyName);
+			    fprintf(f, "speed = %d\n", speedName);
+			    fclose(f); // Fermeture du fichier de config
+
+	            quit = afficherMenu(renderer);
+	            return quit;
+	        }
+
+	        if (buttons & SDL_BUTTON(SDL_BUTTON_LEFT) &&
+	            x >= rectRight.x && x < rectRight.x + rectRight.w &&
+	            y >= rectRight.y && y < rectRight.y + rectRight.h) {
+	            printf("Bouton Right cliqué! avec le them %s\n", theme);
+	        }
+
+	        if (buttons & SDL_BUTTON(SDL_BUTTON_LEFT) &&
+	            x >= rectRightdifficulty.x && x < rectRightdifficulty.x + rectRightdifficulty.w &&
+	            y >= rectRightdifficulty.y && y < rectRightdifficulty.y + rectRightdifficulty.h) {
+	            printf("Bouton Right difficulty cliqué!");
+	        	if(difficultyName < 3){
+	        		difficultyName += 1;
+	        	}
+	        }
+
+	        if (buttons & SDL_BUTTON(SDL_BUTTON_LEFT) &&
+	            x >= rectLeftdifficulty.x && x < rectLeftdifficulty.x + rectLeftdifficulty.w &&
+	            y >= rectLeftdifficulty.y && y < rectLeftdifficulty.y + rectLeftdifficulty.h) {
+	            printf("Bouton Left difficulty cliqué!");
+	        	if(difficultyName > 1){
+	        		difficultyName -= 1;
+	        	}
+	        }
+
+	        if (buttons & SDL_BUTTON(SDL_BUTTON_LEFT) &&
+	            x >= rectRightSpeed.x && x < rectRightSpeed.x + rectRightSpeed.w &&
+	            y >= rectRightSpeed.y && y < rectRightSpeed.y + rectRightSpeed.h) {
+	            printf("Bouton Right speed cliqué!");
+	        	if(speedName < 3){
+	        		speedName += 1;
+	        	}
+	        }
+
+	        if (buttons & SDL_BUTTON(SDL_BUTTON_LEFT) &&
+	            x >= rectLeftSpeed.x && x < rectLeftSpeed.x + rectLeftSpeed.w &&
+	            y >= rectLeftSpeed.y && y < rectLeftSpeed.y + rectLeftSpeed.h) {
+	            printf("Bouton Left speed cliqué!");
+	        	if(speedName > 1){
+	        		speedName -= 1;
+	        	}
+	        }
+        }
         
         SDL_RenderPresent(renderer);
 
@@ -629,6 +708,12 @@ int afficherSetting(SDL_Renderer* renderer) {
 
         SDL_FreeSurface(surfaceTheme);
         SDL_DestroyTexture(textureTheme);
+
+        SDL_FreeSurface(surfacedifficulty);
+        SDL_DestroyTexture(texturedifficulty);
+
+        SDL_FreeSurface(surfaceSpeed);
+        SDL_DestroyTexture(textureSpeed);
 
         TTF_CloseFont(SettingFont);
         SDL_DestroyTexture(textureHigh);
@@ -799,6 +884,7 @@ int main(int argc, char *argv[]) {
     SDL_Event event;
     srand(time(NULL));
     while (Jouer == 1) {
+    	readConfigFile(theme, skin, &difficulty, &speed);
     	// Vérifiez si le temps est écoulé
     	if(tempsBloque == 0){
     		currentTime = SDL_GetTicks();
