@@ -692,7 +692,7 @@ int afficherSetting(SDL_Renderer* renderer) {
 	            x >= rectRightSkin.x && x < rectRightSkin.x + rectRightSkin.w &&
 	            y >= rectRightSkin.y && y < rectRightSkin.y + rectRightSkin.h) {
 	            printf("Bouton Right cliqué! avec le them %s\n", skin);
-	        	if(conteurSkin < 3){
+	        	if(conteurSkin < 2){
 	        		conteurSkin += 1;
 	        		SkinName = SkinTab[conteurSkin];
 	        	}
