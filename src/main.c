@@ -208,7 +208,7 @@ void readConfigFile(char* theme, char* skin, int* difficulty, double* speed) {
     const char defaultTheme[] = "default";
     const char defaultSkin[] = "default";
     const double defaultDifficulty = 1, minDifficulty = 1, maxDifficulty = 3;
-    const double defaultSpeed = 1.0, minSpeed = 0.10, maxSpeed = 10.0;
+    const double defaultSpeed = 1.0, minSpeed = 1.0, maxSpeed = 3.0;
     const int maxKeyLength = 20, maxValueLength = 40;
 
     // Initialisation avec des valeurs par défaut
@@ -532,6 +532,14 @@ int afficherPopupHighScore(SDL_Renderer* renderer) {
 }
 
 int afficherSetting(SDL_Renderer* renderer) {
+	char* ThemeTab[] = {"default", "forest", "space", "ocean"};
+	int conteurTheme = 0;
+    char* ThemeName = ThemeTab[conteurTheme];
+
+    char* SkinTab[] = {"default", "timberman", "cow"};
+    int conteurSkin = 0;
+    char* SkinName = SkinTab[conteurSkin];
+
 	char theme[100], skin[100];
     int difficulty;
     double speed;
@@ -574,25 +582,6 @@ int afficherSetting(SDL_Renderer* renderer) {
 	    // Lecture du fichier de configuration et récupération des valeurs
 	    readConfigFile(theme, skin, &difficulty, &speed);
 
-	    DIR *dir;
-	    struct dirent *ent;
-	    char *diff = NULL;
-	    if ((dir = opendir("src/images/theme")) != NULL) {
-	        /* Trouver le deuxième fichier dans le répertoire */
-	        while ((ent = readdir(dir)) != NULL) {
-	            char *dot = strrchr(ent->d_name, '.');
-	            if (dot && !strcmp(dot, ".png")) {
-	            	*dot = '\0'; // Supprime l'extension ".png"
-	                if (diff == theme) {
-	                	printf("%s\n", theme);
-	                    printf("%s\n", ent->d_name);
-	                    break; // Sortir de la boucle après le deuxième fichier
-	                }
-	            }
-	        }
-	        closedir(dir);
-	    }
-
         //Partie selection du theme
         SDL_Texture *textureRight = chargerTexture(renderer, "src/images/right.png");
         SDL_Rect rectRight = {480, 170, 31.5, 29};
@@ -604,38 +593,53 @@ int afficherSetting(SDL_Renderer* renderer) {
 
         SettingFont = TTF_OpenFont("src/fonts/KOMIKAP_.ttf", 30);
         char ThemeTexte[50];	
-        snprintf(ThemeTexte, sizeof(ThemeTexte), theme);
+        snprintf(ThemeTexte, sizeof(ThemeTexte), ThemeName);
         SDL_Surface* surfaceTheme = TTF_RenderText_Solid(SettingFont, ThemeTexte, couleurTexte);
         SDL_Texture* textureTheme = SDL_CreateTextureFromSurface(renderer, surfaceTheme);
         SDL_Rect rectTheme = { 331.5, 160, surfaceTheme->w, surfaceTheme->h };
         SDL_RenderCopy(renderer, textureTheme, NULL, &rectTheme);
 
+        //Partie selection du skin
+        SDL_Rect rectRightSkin = {480, 200, 31.5, 29};
+        SDL_RenderCopy(renderer, textureRight, NULL, &rectRightSkin);
+        
+        SDL_Rect rectLeftSkin = {290, 200, 31.5, 29};
+        SDL_RenderCopy(renderer, textureLeft, NULL, &rectLeftSkin);
+
+        SettingFont = TTF_OpenFont("src/fonts/KOMIKAP_.ttf", 30);
+        char SkinTexte[50];	
+        snprintf(SkinTexte, sizeof(SkinTexte), SkinName);
+        SDL_Surface* surfaceSkin = TTF_RenderText_Solid(SettingFont, SkinTexte, couleurTexte);
+        SDL_Texture* textureSkin = SDL_CreateTextureFromSurface(renderer, surfaceSkin);
+        SDL_Rect rectSkin = { 331.5, 200, surfaceSkin->w, surfaceSkin->h };
+        SDL_RenderCopy(renderer, textureSkin, NULL, &rectSkin);
+
         //difficulty selection
-        SDL_Rect rectRightdifficulty = {480, 200, 31.5, 29};
+        SDL_Rect rectRightdifficulty = {480, 230, 31.5, 29};
         SDL_RenderCopy(renderer, textureRight, NULL, &rectRightdifficulty);
         
-        SDL_Rect rectLeftdifficulty = {290, 200, 31.5, 29};
+        SDL_Rect rectLeftdifficulty = {290, 230, 31.5, 29};
         SDL_RenderCopy(renderer, textureLeft, NULL, &rectLeftdifficulty);
         
         char difficultyTexte[50];	
         snprintf(difficultyTexte, sizeof(difficultyTexte), "%d", difficultyName);
         SDL_Surface* surfacedifficulty = TTF_RenderText_Solid(SettingFont, difficultyTexte, couleurTexte);
         SDL_Texture* texturedifficulty = SDL_CreateTextureFromSurface(renderer, surfacedifficulty);
-        SDL_Rect rectdifficulty = { 331.5, 200, surfacedifficulty->w, surfacedifficulty->h };
+        SDL_Rect rectdifficulty = { 331.5, 230, surfacedifficulty->w, surfacedifficulty->h };
         SDL_RenderCopy(renderer, texturedifficulty, NULL, &rectdifficulty);
 
         //speed selection
-        SDL_Rect rectRightSpeed = {480, 230, 31.5, 29};
+        SDL_Rect rectRightSpeed = {480, 260, 31.5, 29};
         SDL_RenderCopy(renderer, textureRight, NULL, &rectRightSpeed);
         
-        SDL_Rect rectLeftSpeed = {290, 230, 31.5, 29};
+        SDL_Rect rectLeftSpeed = {290, 260, 31.5, 29};
         SDL_RenderCopy(renderer, textureLeft, NULL, &rectLeftSpeed);
         
         char SpeedTexte[50];	
         snprintf(SpeedTexte, sizeof(SpeedTexte), "%d", speedName);
         SDL_Surface* surfaceSpeed = TTF_RenderText_Solid(SettingFont, SpeedTexte, couleurTexte);
         SDL_Texture* textureSpeed = SDL_CreateTextureFromSurface(renderer, surfaceSpeed);
-        SDL_Rect rectSpeed = { 331.5, 230, surfaceSpeed->w, surfaceSpeed->h };
+        SDL_Rect rectSpeed = { 331.5, 260, surfaceSpeed->w, surfaceSpeed->h };
         SDL_RenderCopy(renderer, textureSpeed, NULL, &rectSpeed);
 
 
@@ -654,8 +658,8 @@ int afficherSetting(SDL_Renderer* renderer) {
 	        	//Changer settings
 		        FILE* f = fopen("config/timberman.config", "r"); // Ouverture en lecture seule du fichier de config
 			    f = fopen("config/timberman.config", "w");
-			    fprintf(f, "theme = default\n");
-			    fprintf(f, "skin = default\n");
+			    fprintf(f, "theme = %s\n", ThemeName);
+			    fprintf(f, "skin = %s\n", SkinName);
 			    fprintf(f, "difficulty = %d\n", difficultyName);
 			    fprintf(f, "speed = %d\n", speedName);
 			    fclose(f); // Fermeture du fichier de config
@@ -663,13 +667,47 @@ int afficherSetting(SDL_Renderer* renderer) {
 	            quit = afficherMenu(renderer);
 	            return quit;
 	        }
-
+	        //Theme
 	        if (buttons & SDL_BUTTON(SDL_BUTTON_LEFT) &&
 	            x >= rectRight.x && x < rectRight.x + rectRight.w &&
 	            y >= rectRight.y && y < rectRight.y + rectRight.h) {
 	            printf("Bouton Right cliqué! avec le them %s\n", theme);
+	        	if(conteurTheme < 3){
+	        		conteurTheme += 1;
+	        		ThemeName = ThemeTab[conteurTheme];
+	        	}
 	        }
 
+	        if (buttons & SDL_BUTTON(SDL_BUTTON_LEFT) &&
+	            x >= rectLeft.x && x < rectLeft.x + rectLeft.w &&
+	            y >= rectLeft.y && y < rectLeft.y + rectLeft.h) {
+	            printf("Bouton Left cliqué! avec le them %s\n", theme);
+		        if(conteurTheme > 0){
+		        	conteurTheme -= 1;
+	        		ThemeName = ThemeTab[conteurTheme];
+	        	}
+	        }
+	        //Skin
+	        if (buttons & SDL_BUTTON(SDL_BUTTON_LEFT) &&
+	            x >= rectRightSkin.x && x < rectRightSkin.x + rectRightSkin.w &&
+	            y >= rectRightSkin.y && y < rectRightSkin.y + rectRightSkin.h) {
+	            printf("Bouton Right cliqué! avec le them %s\n", skin);
+	        	if(conteurSkin < 3){
+	        		conteurSkin += 1;
+	        		SkinName = SkinTab[conteurSkin];
+	        	}
+	        }
+
+	        if (buttons & SDL_BUTTON(SDL_BUTTON_LEFT) &&
+	            x >= rectLeftSkin.x && x < rectLeftSkin.x + rectLeftSkin.w &&
+	            y >= rectLeftSkin.y && y < rectLeftSkin.y + rectLeftSkin.h) {
+	            printf("Bouton Left cliqué! avec le them %s\n", skin);
+		        if(conteurSkin > 0){
+	        		conteurSkin -= 1;
+	        		SkinName = SkinTab[conteurSkin];
+	        	}
+	        }
+	        //difficulty
 	        if (buttons & SDL_BUTTON(SDL_BUTTON_LEFT) &&
 	            x >= rectRightdifficulty.x && x < rectRightdifficulty.x + rectRightdifficulty.w &&
 	            y >= rectRightdifficulty.y && y < rectRightdifficulty.y + rectRightdifficulty.h) {
@@ -687,7 +725,7 @@ int afficherSetting(SDL_Renderer* renderer) {
 	        		difficultyName -= 1;
 	        	}
 	        }
-
+	        //Speed
 	        if (buttons & SDL_BUTTON(SDL_BUTTON_LEFT) &&
 	            x >= rectRightSpeed.x && x < rectRightSpeed.x + rectRightSpeed.w &&
 	            y >= rectRightSpeed.y && y < rectRightSpeed.y + rectRightSpeed.h) {
@@ -715,6 +753,9 @@ int afficherSetting(SDL_Renderer* renderer) {
 
         SDL_FreeSurface(surfaceTheme);
         SDL_DestroyTexture(textureTheme);
+
+        SDL_FreeSurface(surfaceSkin);
+        SDL_DestroyTexture(textureSkin);
 
         SDL_FreeSurface(surfacedifficulty);
         SDL_DestroyTexture(texturedifficulty);
@@ -892,7 +933,24 @@ int main(int argc, char *argv[]) {
     srand(time(NULL));
     while (Jouer == 1) {
     	readConfigFile(theme, skin, &difficulty, &speed);
-    	// Vérifiez si le temps est écoulé
+    	snprintf(cheminImage, sizeof(cheminImage), "src/images/theme/%s.png", theme);
+	    textureFond = chargerTexture(renderer, cheminImage);
+
+	    snprintf(cheminImage, sizeof(cheminImage), "src/images/skin/%s/player1.png", skin);
+	    texturePersonnage = chargerTexture(renderer, cheminImage);
+
+	    snprintf(cheminImage, sizeof(cheminImage), "src/images/skin/%s/tree.png", skin);
+	    textureArbre = chargerTexture(renderer, cheminImage);
+
+	    snprintf(cheminImage, sizeof(cheminImage), "src/images/skin/%s/branch.png", skin);
+	    textureBranche = chargerTexture(renderer, cheminImage);
+
+	    snprintf(cheminImage, sizeof(cheminImage), "src/images/skin/%s/player2.png", skin);
+	    textureHacheTape = chargerTexture(renderer, cheminImage);
+
+	    snprintf(cheminImage, sizeof(cheminImage), "src/images/skin/%s/particule.png", skin);
+	    textureBuche = chargerTexture(renderer, cheminImage);
+	    // Vérifiez si le temps est écoulé
     	if(tempsBloque == 0){
     		currentTime = SDL_GetTicks();
 	    	currentTime = currentTime - timing;
