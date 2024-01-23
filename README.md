@@ -17,3 +17,5 @@ Pour Pouvoir lancer le projet il faudra depuis la racine lancer la commande suiv
 ```
 ./bin/prog.exe
 ```
+
+Le jeu se joue à l'aide des flèches droites et gauche.
