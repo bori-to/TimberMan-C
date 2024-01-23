@@ -15,5 +15,5 @@ gcc src/main.c -o bin/prog -I include -L lib -lmingw32 -lSDL2main -lSDL2 -lSDL2_
 Pour Pouvoir lancer le projet il faudra depuis la racine lancer la commande suivante dans un terminal :
 
 ```
-bin/prog.exe
+./bin/prog.exe
 ```
