@@ -156,7 +156,7 @@ int detecterCollision(SDL_Rect rectJoueur, SDL_Rect rectBranche) {
 }
 
 // Définition des thèmes supportés
-const char* supportedThemes[] = {"default", "forest", "space", "ocean"};
+const char* supportedThemes[] = {"default", "desert", "newyork", "space"};
 const int supportedThemesCount = sizeof(supportedThemes) / sizeof(supportedThemes[0]);
 
 
@@ -178,7 +178,7 @@ bool isThemeSupported(const char* theme) {
 }
 
 // Définition des skins supportés
-const char* supportedSkins[] = {"default", "timberman", "cow"};
+const char* supportedSkins[] = {"default", "timberman", "vador", "zombie", "cowboy", "ben"};
 const int supportedSkinsCount = sizeof(supportedSkins) / sizeof(supportedSkins[0]);
 
 
@@ -532,11 +532,11 @@ int afficherPopupHighScore(SDL_Renderer* renderer) {
 }
 
 int afficherSetting(SDL_Renderer* renderer) {
-	char* ThemeTab[] = {"default", "forest", "space", "ocean"};
+	char* ThemeTab[] = {"default", "desert", "newyork", "space"};
 	int conteurTheme = 0;
     char* ThemeName = ThemeTab[conteurTheme];
 
-    char* SkinTab[] = {"default", "timberman", "cow"};
+    char* SkinTab[] = {"default", "timberman", "vador", "zombie", "cowboy", "ben"};
     int conteurSkin = 0;
     char* SkinName = SkinTab[conteurSkin];
 
@@ -584,62 +584,63 @@ int afficherSetting(SDL_Renderer* renderer) {
 
         //Partie selection du theme
         SDL_Texture *textureRight = chargerTexture(renderer, "src/images/right.png");
-        SDL_Rect rectRight = {480, 170, 31.5, 29};
+        SDL_Rect rectRight = {480, 190, 31.5, 29};
         SDL_RenderCopy(renderer, textureRight, NULL, &rectRight);
         
         SDL_Texture *textureLeft = chargerTexture(renderer, "src/images/left.png");
-        SDL_Rect rectLeft = {290, 170, 31.5, 29};
+        SDL_Rect rectLeft = {290, 190, 31.5, 29};
         SDL_RenderCopy(renderer, textureLeft, NULL, &rectLeft);
 
-        SettingFont = TTF_OpenFont("src/fonts/KOMIKAP_.ttf", 30);
+        SettingFont = TTF_OpenFont("src/fonts/KOMIKAP_.ttf", 25);
         char ThemeTexte[50];	
         snprintf(ThemeTexte, sizeof(ThemeTexte), ThemeName);
         SDL_Surface* surfaceTheme = TTF_RenderText_Solid(SettingFont, ThemeTexte, couleurTexte);
         SDL_Texture* textureTheme = SDL_CreateTextureFromSurface(renderer, surfaceTheme);
-        SDL_Rect rectTheme = { 331.5, 160, surfaceTheme->w, surfaceTheme->h };
+        SDL_Rect rectTheme = { 331.5, 180, surfaceTheme->w, surfaceTheme->h };
         SDL_RenderCopy(renderer, textureTheme, NULL, &rectTheme);
 
         //Partie selection du skin
-        SDL_Rect rectRightSkin = {480, 200, 31.5, 29};
+        SDL_Rect rectRightSkin = {480, 240, 31.5, 29};
         SDL_RenderCopy(renderer, textureRight, NULL, &rectRightSkin);
         
-        SDL_Rect rectLeftSkin = {290, 200, 31.5, 29};
+        SDL_Rect rectLeftSkin = {290, 240, 31.5, 29};
         SDL_RenderCopy(renderer, textureLeft, NULL, &rectLeftSkin);
 
-        SettingFont = TTF_OpenFont("src/fonts/KOMIKAP_.ttf", 30);
+        SettingFont = TTF_OpenFont("src/fonts/KOMIKAP_.ttf", 25);
         char SkinTexte[50];	
         snprintf(SkinTexte, sizeof(SkinTexte), SkinName);
         SDL_Surface* surfaceSkin = TTF_RenderText_Solid(SettingFont, SkinTexte, couleurTexte);
         SDL_Texture* textureSkin = SDL_CreateTextureFromSurface(renderer, surfaceSkin);
-        SDL_Rect rectSkin = { 331.5, 200, surfaceSkin->w, surfaceSkin->h };
+        SDL_Rect rectSkin = { 331.5, 240, surfaceSkin->w, surfaceSkin->h };
         SDL_RenderCopy(renderer, textureSkin, NULL, &rectSkin);
 
         //difficulty selection
-        SDL_Rect rectRightdifficulty = {480, 230, 31.5, 29};
+        SettingFont = TTF_OpenFont("src/fonts/KOMIKAP_.ttf", 20);
+        SDL_Rect rectRightdifficulty = {480, 290, 31.5, 29};
         SDL_RenderCopy(renderer, textureRight, NULL, &rectRightdifficulty);
         
-        SDL_Rect rectLeftdifficulty = {290, 230, 31.5, 29};
+        SDL_Rect rectLeftdifficulty = {290, 290, 31.5, 29};
         SDL_RenderCopy(renderer, textureLeft, NULL, &rectLeftdifficulty);
         
         char difficultyTexte[50];	
-        snprintf(difficultyTexte, sizeof(difficultyTexte), "%d", difficultyName);
+        snprintf(difficultyTexte, sizeof(difficultyTexte), "Difficulty: %d", difficultyName);
         SDL_Surface* surfacedifficulty = TTF_RenderText_Solid(SettingFont, difficultyTexte, couleurTexte);
         SDL_Texture* texturedifficulty = SDL_CreateTextureFromSurface(renderer, surfacedifficulty);
-        SDL_Rect rectdifficulty = { 331.5, 230, surfacedifficulty->w, surfacedifficulty->h };
+        SDL_Rect rectdifficulty = { 331.5, 290, surfacedifficulty->w, surfacedifficulty->h };
         SDL_RenderCopy(renderer, texturedifficulty, NULL, &rectdifficulty);
 
         //speed selection
-        SDL_Rect rectRightSpeed = {480, 260, 31.5, 29};
+        SDL_Rect rectRightSpeed = {480, 340, 31.5, 29};
         SDL_RenderCopy(renderer, textureRight, NULL, &rectRightSpeed);
         
-        SDL_Rect rectLeftSpeed = {290, 260, 31.5, 29};
+        SDL_Rect rectLeftSpeed = {290, 340, 31.5, 29};
         SDL_RenderCopy(renderer, textureLeft, NULL, &rectLeftSpeed);
         
         char SpeedTexte[50];	
-        snprintf(SpeedTexte, sizeof(SpeedTexte), "%d", speedName);
+        snprintf(SpeedTexte, sizeof(SpeedTexte), "Speed: %d", speedName);
         SDL_Surface* surfaceSpeed = TTF_RenderText_Solid(SettingFont, SpeedTexte, couleurTexte);
         SDL_Texture* textureSpeed = SDL_CreateTextureFromSurface(renderer, surfaceSpeed);
-        SDL_Rect rectSpeed = { 331.5, 260, surfaceSpeed->w, surfaceSpeed->h };
+        SDL_Rect rectSpeed = { 331.5, 340, surfaceSpeed->w, surfaceSpeed->h };
         SDL_RenderCopy(renderer, textureSpeed, NULL, &rectSpeed);
 
 
@@ -692,7 +693,7 @@ int afficherSetting(SDL_Renderer* renderer) {
 	            x >= rectRightSkin.x && x < rectRightSkin.x + rectRightSkin.w &&
 	            y >= rectRightSkin.y && y < rectRightSkin.y + rectRightSkin.h) {
 	            printf("Bouton Right cliqué! avec le them %s\n", skin);
-	        	if(conteurSkin < 2){
+	        	if(conteurSkin < 5){
 	        		conteurSkin += 1;
 	        		SkinName = SkinTab[conteurSkin];
 	        	}
@@ -928,28 +929,43 @@ int main(int argc, char *argv[]) {
 	Uint32 currentTime; // Variable pour stocker le temps actuel en millisecondes
 	int timing = 0;
 	int tempsBloque = 1;
+	//Tape anim
+	Uint32 startTimeTape = 0;
     // Boucle principale du jeu
+    textureFond == NULL;
+    texturePersonnage == NULL;
+    char cheminImageVerif[100];
+    char cheminImageVerifTheme[100];
+    char cheminImageTheme[100];
     SDL_Event event;
     srand(time(NULL));
     while (Jouer == 1) {
-    	readConfigFile(theme, skin, &difficulty, &speed);
-    	snprintf(cheminImage, sizeof(cheminImage), "src/images/theme/%s.png", theme);
-	    textureFond = chargerTexture(renderer, cheminImage);
+	    readConfigFile(theme, skin, &difficulty, &speed);
+	    snprintf(cheminImageVerifTheme, sizeof(cheminImageVerifTheme), "src/images/theme/%s.png", theme);
+		snprintf(cheminImageVerif, sizeof(cheminImageVerif), "src/images/skin/%s/particule.png", skin);
+    	if(textureFond == NULL || texturePersonnage == NULL || strcmp(cheminImageVerif, cheminImage) != 0 || strcmp(cheminImageVerifTheme, cheminImageTheme) != 0){
+    		snprintf(cheminImageTheme, sizeof(cheminImageTheme), "src/images/theme/%s.png", theme);
+	    	snprintf(cheminImage, sizeof(cheminImage), "src/images/theme/%s.png", theme);
+		    textureFond = chargerTexture(renderer, cheminImage);
 
-	    snprintf(cheminImage, sizeof(cheminImage), "src/images/skin/%s/player1.png", skin);
-	    texturePersonnage = chargerTexture(renderer, cheminImage);
+		    snprintf(cheminImage, sizeof(cheminImage), "src/images/skin/%s/player1.png", skin);
+		    texturePersonnage = chargerTexture(renderer, cheminImage);
 
-	    snprintf(cheminImage, sizeof(cheminImage), "src/images/skin/%s/tree.png", skin);
-	    textureArbre = chargerTexture(renderer, cheminImage);
+		    snprintf(cheminImage, sizeof(cheminImage), "src/images/skin/%s/tree.png", skin);
+		    textureArbre = chargerTexture(renderer, cheminImage);
 
-	    snprintf(cheminImage, sizeof(cheminImage), "src/images/skin/%s/branch.png", skin);
-	    textureBranche = chargerTexture(renderer, cheminImage);
+		    snprintf(cheminImage, sizeof(cheminImage), "src/images/skin/%s/branch.png", skin);
+		    textureBranche = chargerTexture(renderer, cheminImage);
 
-	    snprintf(cheminImage, sizeof(cheminImage), "src/images/skin/%s/player2.png", skin);
-	    textureHacheTape = chargerTexture(renderer, cheminImage);
+		    snprintf(cheminImage, sizeof(cheminImage), "src/images/skin/%s/player2.png", skin);
+		    textureHacheTape = chargerTexture(renderer, cheminImage);
 
-	    snprintf(cheminImage, sizeof(cheminImage), "src/images/skin/%s/particule.png", skin);
-	    textureBuche = chargerTexture(renderer, cheminImage);
+		    snprintf(cheminImage, sizeof(cheminImage), "src/images/skin/%s/particule.png", skin);
+		    textureBuche = chargerTexture(renderer, cheminImage);
+		    for (int i = 0; i < 5; ++i) {
+		        branches[i].texture = textureBranche;
+		    }
+		}
 	    // Vérifiez si le temps est écoulé
     	if(tempsBloque == 0){
     		currentTime = SDL_GetTicks();
@@ -1046,6 +1062,7 @@ int main(int argc, char *argv[]) {
                     }
                 }
                 tapeEnCours = 1;
+                startTimeTape = SDL_GetTicks();
             }
         }
 
@@ -1076,6 +1093,7 @@ int main(int argc, char *argv[]) {
             // Inverser l'image si le personnage regarde à gauche
             flip = SDL_FLIP_HORIZONTAL;
         }
+
         // Dessiner le personnage avec la hache
         if (tapeEnCours == 1) {
         	if (rectPersonnage.x == 175) {
@@ -1117,13 +1135,22 @@ int main(int argc, char *argv[]) {
 
         // Rafraîchir l'écran
         SDL_RenderPresent(renderer);
-        SDL_Delay(100);
-        tapeEnCours = 0;
+        SDL_Delay(10);
+        if (tapeEnCours == 1) {
+            Uint32 currentTimeTape = SDL_GetTicks();
+            Uint32 elapsedTimeTape = currentTimeTape - startTimeTape;
+
+            if (elapsedTimeTape >= 90) {
+                tapeEnCours = 0;  // Réinitialiser la variable après 100 ms
+            }
+        }
+        // tapeEnCours = 0;
     }
 
     // Libération des ressourcesv
     Mix_FreeMusic(musiqueDeFond);
     Mix_FreeChunk(SonCouperBois);
+    SDL_DestroyTexture(textureFond);
     SDL_DestroyTexture(textureTimerBorder);
     SDL_DestroyTexture(textureBuche);
     SDL_DestroyTexture(textureHacheTape);
