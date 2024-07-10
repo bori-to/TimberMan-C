@@ -1,0 +1,1269 @@
+{
+	"info": {
+		"_postman_id": "8c455d15-d75e-4b22-b1fa-dcff1788f0da",
+		"name": "ESGI - PA_2A",
+		"description": "Mettre le token dans Authorization du Dossier ESGI - PA_2A\n\nPour avoir un token, faire une requête dans user/login avec :\n\n{  \n\"email\":\"exemple@exemple2.com\",\n\n\"pwd\":\"password\"  \n}",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "28886183",
+		"_collection_link": "https://restpastrop-rat.postman.co/workspace/Team-Workspace~00277993-0acc-400e-8102-03bb77be0acd/collection/32885444-8c455d15-d75e-4b22-b1fa-dcff1788f0da?action=share&source=collection_link&creator=28886183"
+	},
+	"item": [
+		{
+			"name": "Projet Annuel",
+			"item": [
+				{
+					"name": "user",
+					"item": [
+						{
+							"name": "banishment",
+							"item": [
+								{
+									"name": "banishments",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8081/index.php/user/banishment",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8081",
+											"path": [
+												"index.php",
+												"user",
+												"banishment"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "banishmentUserID",
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n\"userID\": 1\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:8081/index.php/user/banishmentByUserID/1",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8081",
+											"path": [
+												"index.php",
+												"user",
+												"banishmentByUserID",
+												"1"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "add banishment",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n\"startingDate\":\"2024-04-01\",\r\n\"endingDate\":\"2024-04-30\",\r\n\"reason\":\"Raison de l'ajout\",\r\n\"userID\": 1 \r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:8081/index.php/user/banishment",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8081",
+											"path": [
+												"index.php",
+												"user",
+												"banishment"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "update banishment/userid",
+									"request": {
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"permanent\": \"false\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:8081/index.php/user/banishment/1",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8081",
+											"path": [
+												"index.php",
+												"user",
+												"banishment",
+												"1"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "subscribers",
+							"item": [
+								{
+									"name": "subscribers",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8081/index.php/user/subscriber",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8081",
+											"path": [
+												"index.php",
+												"user",
+												"subscriber"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "add subscriber",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"email\": \"exemple@gmail.com\",\r\n    \"subAt\": \"2024-03-28\",\r\n    \"userID\": 1\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:8081/index.php/user/subscriber",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8081",
+											"path": [
+												"index.php",
+												"user",
+												"subscriber"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "update subscriber/userid",
+									"request": {
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"email\": \"exemple2@gmail.com\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:8081/index.php/user/subscriber/1",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8081",
+											"path": [
+												"index.php",
+												"user",
+												"subscriber",
+												"1"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "delete subscriber/userid",
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8081/index.php/user/subscriber/1",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8081",
+											"path": [
+												"index.php",
+												"user",
+												"subscriber",
+												"1"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "activation",
+							"item": [
+								{
+									"name": "deactivate",
+									"request": {
+										"method": "PATCH",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8081/index.php/user/deactivate/1",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8081",
+											"path": [
+												"index.php",
+												"user",
+												"deactivate",
+												"1"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "activate",
+									"request": {
+										"method": "PATCH",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8081/index.php/user/activate/1",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8081",
+											"path": [
+												"index.php",
+												"user",
+												"activate",
+												"1"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "user/signin",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\"firstname\": \"test14\",\r\n\"lastname\": \"testname14\",\r\n\"email\": \"exemple@exemple14.com\",\r\n\"pseudo\": \"testing14\",\r\n\"pwd\": \"Password123!\",\r\n\"subbedToNewsletter\": false\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8081/index.php/user/signin",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8081",
+									"path": [
+										"index.php",
+										"user",
+										"signin"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "user/login",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\r\n\"email\":\"exemple@exemple2.com\",\r\n\"pwd\":\"password\"\r\n\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://api.pariscaretakerservices.com/index.php/user/login",
+									"protocol": "https",
+									"host": [
+										"api",
+										"pariscaretakerservices",
+										"com"
+									],
+									"path": [
+										"index.php",
+										"user",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "user/logout",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8081/index.php/user/logout",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8081",
+									"path": [
+										"index.php",
+										"user",
+										"logout"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "user/id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8081/index.php/user/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8081",
+									"path": [
+										"index.php",
+										"user",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "users",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8081/index.php/user",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8081",
+									"path": [
+										"index.php",
+										"user"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Users",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"pseudo\": \"brrrr\",\r\n    \"lastLogin\": \"2024-04-13 18:25:37\",\r\n    \"role\": \"1\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8081/index.php/user/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8081",
+									"path": [
+										"index.php",
+										"user",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Users",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8081/index.php/user/3",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8081",
+									"path": [
+										"index.php",
+										"user",
+										"3"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "property",
+					"item": [
+						{
+							"name": "review",
+							"item": [
+								{
+									"name": "propertyid/review",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8081/index.php/property/1/review",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8081",
+											"path": [
+												"index.php",
+												"property",
+												"1",
+												"review"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "propertys",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8081/index.php/property",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8081",
+									"path": [
+										"index.php",
+										"property"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "property/id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8081/index.php/property/3",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8081",
+									"path": [
+										"index.php",
+										"property",
+										"3"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "add property",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"title\": \"Belle maison avec jardin!\",\r\n    \"type\": \"Maison\",\r\n    \"capacity\": 6,\r\n    \"rooms\": [\"3 Chambres\", \"2 Salles de bains\"],\r\n    \"amenities\": [\"WiFi\", \"Parking\", \"Cuisine équipée\"], \r\n    \"rules\": [\"Animaux autorisés\", \"Non-fumeur\"],\r\n    \"address\": \"1 Rue de l'Exemple52 Paris 72015\",\r\n    \"description\": \"Belle maison avec jardin dbefbeaivcbzivbehzbvzvbezbvrezvezrv\",\r\n    \"price\": \"500\",\r\n    \"photos\": [\"https://a0.muscache.com/im/pictures/e24c13b9-dd2a-4e15-9845-dd588a884e39.jpg?im_w=720\",\r\n     \"https://a0.muscache.com/im/pictures/373443ec-b377-4181-b753-3a2f3508c2b3.jpg?im_w=720\",\r\n      \"https://a0.muscache.com/im/pictures/97b92645-f975-4e60-9ae0-205885af64b0.jpg?im_w=720\",\r\n      \"https://a0.muscache.com/im/pictures/0089340a-409a-4fbe-9ab7-cb26884bf267.jpg?im_w=720\",\r\n      \"https://a0.muscache.com/im/pictures/90e58fdf-257b-43a5-a6dc-a08f518397fe.jpg?im_w=720\"],\r\n    \"note\": 4,\r\n    \"bookingDates\": {\"debut\":\"2024-03-28\", \"fin\":\"2024-06-10\"},\r\n    \"nbReview\": 10,\r\n    \"userID\": 1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8081/index.php/property",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8081",
+									"path": [
+										"index.php",
+										"property"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update property",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"availability\": \"true\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8081/index.php/property/2",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8081",
+									"path": [
+										"index.php",
+										"property",
+										"2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete property",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8081/index.php/property/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8081",
+									"path": [
+										"index.php",
+										"property",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "booking",
+					"item": [
+						{
+							"name": "review",
+							"item": [
+								{
+									"name": "bookingid/review",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8081/index.php/booking/2/review",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8081",
+											"path": [
+												"index.php",
+												"booking",
+												"2",
+												"review"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "reviews",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8081/index.php/booking/review",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8081",
+											"path": [
+												"index.php",
+												"booking",
+												"review"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "add booking/review",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"rating\": 1,\r\n    \"comments\": \"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras venenatis ultricies tellus id auctor. Mauris volutpat semper turpis, sit amet sagittis leo aliquam sit amet. Sed a neque vel nibh lobortis mattis. Aliquam rhoncus dictum scelerisque. Nulla facilisi. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Morbi vitae ex felis. Mauris fringilla aliquet diam, et posuere purus rhoncus eget. Nullam pharetra scelerisque scelerisque. Ut molestie dignissim orci quis scelerisque. Nam imperdiet mattis lectus a placerat. Aliquam fermentum ante ut ligula varius sollicitudin. Duis consequat, risus quis tempus placerat, lectus mi aliquam lorem, eget pharetra tellus nisi vel justo. Aliquam erat volutpat. Praesent cursus lacus ac magna lacinia auctor. Integer dictum, orci vitae ornare hendrerit, est massa molestie ipsum, ut euismod sem est feugiat ante.\",\r\n    \"reviewDate\": \"2024-03-26 12:00:00\",\r\n    \"propertyID\": 3,\r\n    \"bookingID\": 1\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:8081/index.php/booking/review",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8081",
+											"path": [
+												"index.php",
+												"booking",
+												"review"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "update bookingid/review",
+									"request": {
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"comments\": \"nul enfait\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:8081/index.php/booking/4/review",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8081",
+											"path": [
+												"index.php",
+												"booking",
+												"4",
+												"review"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "delete bookingid/review Copy",
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8081/index.php/booking/1/review",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8081",
+											"path": [
+												"index.php",
+												"booking",
+												"1",
+												"review"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "payment",
+							"item": []
+						},
+						{
+							"name": "bookings",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8081/index.php/booking",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8081",
+									"path": [
+										"index.php",
+										"booking"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "booking/id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8081/index.php/booking/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8081",
+									"path": [
+										"index.php",
+										"booking",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "add booking",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"reservationDates\": [\"2024-03-25\",\"2024-004-10\"],\r\n    \"userID\": 2,\r\n    \"propertyID\": 2\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8081/index.php/booking",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8081",
+									"path": [
+										"index.php",
+										"booking"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update booking",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"paymentStatus\": \"false\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8081/index.php/booking/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8081",
+									"path": [
+										"index.php",
+										"booking",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete booking",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8081/index.php/booking/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8081",
+									"path": [
+										"index.php",
+										"booking",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "service",
+					"item": [
+						{
+							"name": "service_booking",
+							"item": [
+								{
+									"name": "service/booking/bookingid",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8081/index.php/service/booking/4",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8081",
+											"path": [
+												"index.php",
+												"service",
+												"booking",
+												"4"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "service/booking/bookingid Copy",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8081/index.php/service/providerBooking/3",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8081",
+											"path": [
+												"index.php",
+												"service",
+												"providerBooking",
+												"3"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "add service/booking",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"bookingID\": 4,\r\n    \"serviceID\": 6,\r\n    \"details\": \"detail du service trop bien\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:8081/index.php/service/booking",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8081",
+											"path": [
+												"index.php",
+												"service",
+												"booking"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "delete service/serviceid/booking",
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8081/index.php/service/booking/service_booking_id",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8081",
+											"path": [
+												"index.php",
+												"service",
+												"booking",
+												"service_booking_id"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "service_property",
+							"item": [
+								{
+									"name": "service/property/propertyid",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8081/index.php/service/property/1",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8081",
+											"path": [
+												"index.php",
+												"service",
+												"property",
+												"1"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "service/property/propertyid cp",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8081/index.php/service/providerProperty/3",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8081",
+											"path": [
+												"index.php",
+												"service",
+												"providerProperty",
+												"3"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "add service/property",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"bookingID\": 4,\r\n    \"serviceID\": 6,\r\n    \"details\": \"detail du service trop bien\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:8081/index.php/service/property",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8081",
+											"path": [
+												"index.php",
+												"service",
+												"property"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "delete service/serviceid/property",
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8081/index.php/service/2/property/4",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8081",
+											"path": [
+												"index.php",
+												"service",
+												"2",
+												"property",
+												"4"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "services",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8081/index.php/service?name=taxi",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8081",
+									"path": [
+										"index.php",
+										"service"
+									],
+									"query": [
+										{
+											"key": "name",
+											"value": "taxi"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "service/userid",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8081/index.php/service/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8081",
+									"path": [
+										"index.php",
+										"service",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "add service",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"ménage 5\",\r\n    \"description\": \"faire le menage chez vous 5, faire le menage chez vous 5, faire le menage chez vous 5\",\r\n    \"price\": 15,\r\n    \"userID\": 3\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8081/index.php/service",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8081",
+									"path": [
+										"index.php",
+										"service"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update service/id",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"availability\": \"true\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8081/index.php/service/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8081",
+									"path": [
+										"index.php",
+										"service",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete service/id",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8081/index.php/service/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8081",
+									"path": [
+										"index.php",
+										"service",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			],
+			"description": "WOW !!!!!!!!"
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJ1c2VySWQiOjEsInVzZXJuYW1lIjoiYWRyaWVuIiwicm9sZSI6MSwiZXhwIjoxNzE5NTE1NDE4fQ.s5LLPkdD14lFpx_T6ZduOYpJW29pJKNuIGgvghjQ_HmaJg-0BgkKez6h0mmWgO1vsTF-X1L2OBvI6MO-b5xmrA\\",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
